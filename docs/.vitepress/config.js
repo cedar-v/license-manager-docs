@@ -3,6 +3,14 @@ export default {
   description: 'License Manager Documentation',
   base: '/license-manager-docs/', // 根据你的 GitHub 仓库名称调整
 
+  // 忽略死链检查
+  ignoreDeadLinks: [
+    // 忽略所有 localhost 链接
+    /^https?:\/\/localhost/,
+    // 忽略演示环境链接
+    /^http:\/\/lm\.cedar-v\.com/
+  ],
+
   locales: {
     root: {
       label: '中文',
