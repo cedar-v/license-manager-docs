@@ -1,8 +1,8 @@
 export default {
   title: 'License Manager',
   description: 'License Manager Documentation',
-  base: '/license-manager-docs/', // 根据你的 GitHub 仓库名称调整
-
+  base: '/', // 使用自定义域名时，base 应该设置为 '/'
+  
   // 忽略死链检查
   ignoreDeadLinks: [
     // 忽略所有 localhost 链接
