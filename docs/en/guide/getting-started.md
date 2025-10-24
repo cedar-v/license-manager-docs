@@ -1,18 +1,38 @@
 # Getting Started
 
-This guide will help you get started with License Manager quickly.
+## Quick Deployment with GitHub Images
 
-## Installation
+### 1. Get Deployment Files
 
-[Installation instructions]
+Copy the `docker-compose.github.image.yml` file from the project root to your deployment directory:
 
-## Configuration
+```bash
+# Method 1: Direct download
+curl -O https://raw.githubusercontent.com/cedar-v/license-manager/main/docker-compose.github.image.yml
 
-[Configuration details]
+# Method 2: Copy from project
+cp docker-compose.github.image.yml /your/deploy/path/
+```
 
-## Usage Examples
+### 2. Extract Configuration Files
 
-[Usage examples]
+```bash
+# Extract backend configuration files
+mkdir -p backend-config
+docker run --rm -v $(pwd)/backend-config:/tmp/config ghcr.io/cedar-v/license-manager-backend:v0.1.0 sh -c "cp -r /app/backend/configs/* /tmp/config/"
 
-<!-- Note: Local server links http://localhost:18080 and http://localhost:18888 have been removed -->
-<!-- Use relative paths or actual production URLs instead -->
+# Extract frontend nginx configuration file
+docker run --rm -v $(pwd):/tmp/extract ghcr.io/cedar-v/license-manager-frontend:v0.1.0 sh -c "cp /etc/nginx/conf.d/default.conf /tmp/extract/nginx.conf"
+```
+
+### 3. Start Services
+
+```bash
+docker-compose -f docker-compose.github.image.yml up
+```
+
+## Access Information
+
+- **Frontend**: http://localhost:18080
+- **Backend API**: http://localhost:18888
+- **Default Account**: admin / admin@123
