@@ -1,46 +1,69 @@
 export default {
-  title: 'License Manager 文档',
-  description: 'License Manager 使用文档',
+  title: 'License Manager',
+  description: 'License Manager Documentation',
+  base: '/license-manager-docs/', // 根据你的 GitHub 仓库名称调整
 
   locales: {
     root: {
-      label: '简体中文',
+      label: '中文',
       lang: 'zh-CN',
-      title: 'License Manager 文档',
-      description: 'License Manager 使用文档',
-    },
-    en: {
-      label: 'English',
-      lang: 'en-US',
-      title: 'License Manager Documentation',
-      description: 'License Manager Documentation',
-    }
-  },
-
-  themeConfig: {
-    locales: {
-      root: {
+      themeConfig: {
         nav: [
           { text: '首页', link: '/' },
           { text: '指南', link: '/guide/' }
         ],
         sidebar: {
           '/guide/': [
-            { text: '介绍', link: '/guide/' }
+            {
+              text: '指南',
+              items: [
+                { text: '介绍', link: '/guide/' },
+                { text: '快速开始', link: '/guide/getting-started' }
+              ]
+            }
           ]
         }
-      },
-      en: {
+      }
+    },
+    en: {
+      label: 'English',
+      lang: 'en-US',
+      themeConfig: {
         nav: [
           { text: 'Home', link: '/en/' },
           { text: 'Guide', link: '/en/guide/' }
         ],
         sidebar: {
           '/en/guide/': [
-            { text: 'Introduction', link: '/en/guide/' }
+            {
+              text: 'Guide',
+              items: [
+                { text: 'Introduction', link: '/en/guide/' },
+                { text: 'Getting Started', link: '/en/guide/getting-started' }
+              ]
+            }
           ]
         }
       }
+    }
+  },
+
+  themeConfig: {
+    nav: [
+      { text: 'Home', link: '/' },
+      { text: 'Guide', link: '/guide/' }
+    ],
+
+    sidebar: {
+      '/guide/': [
+        {
+          text: 'Guide',
+          items: [
+            { text: 'Introduction', link: '/guide/' },
+            { text: 'Getting Started', link: '/guide/getting-started' }
+          ]
+        }
+      ]
     }
   }
 }
