@@ -71,26 +71,40 @@ features:
 
 ## 技术栈
 
-<div class="tech-stack">
-
-**前端**
-- Vue.js 3+
-- 现代化UI组件
-
-**后端**
-- Go 1.23+
-- Gin框架
-- GORM
-- Viper配置
-- Logrus日志
-
-**数据库**
-- MySQL 8+
-
-**部署**
-- Docker
-- 系统服务
-
+<div class="tech-grid">
+  <div class="tech-category">
+    <h3>前端</h3>
+    <ul>
+      <li>Vue.js 3+</li>
+      <li>现代化UI组件</li>
+    </ul>
+  </div>
+  
+  <div class="tech-category">
+    <h3>后端</h3>
+    <ul>
+      <li>Go 1.23+</li>
+      <li>Gin框架</li>
+      <li>GORM</li>
+      <li>Viper配置</li>
+      <li>Logrus日志</li>
+    </ul>
+  </div>
+  
+  <div class="tech-category">
+    <h3>数据库</h3>
+    <ul>
+      <li>MySQL 8+</li>
+    </ul>
+  </div>
+  
+  <div class="tech-category">
+    <h3>部署</h3>
+    <ul>
+      <li>Docker</li>
+      <li>系统服务</li>
+    </ul>
+  </div>
 </div>
 
 ## 开源许可
@@ -119,11 +133,44 @@ features:
 </div>
 
 <style>
-.tech-stack {
+.tech-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 2rem;
   margin: 2rem 0;
+}
+
+.tech-category {
+  background: var(--vp-c-bg-soft);
+  border-radius: 8px;
+  padding: 1.5rem;
+  border: 1px solid var(--vp-c-divider);
+}
+
+.tech-category h3 {
+  margin: 0 0 1rem 0;
+  font-size: 1.1rem;
+  color: var(--vp-c-brand);
+  border-bottom: 2px solid var(--vp-c-brand);
+  padding-bottom: 0.5rem;
+}
+
+.tech-category ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.tech-category li {
+  padding: 0.5rem 0;
+  color: var(--vp-c-text-2);
+}
+
+.tech-category li:before {
+  content: "▸ ";
+  color: var(--vp-c-brand);
+  font-weight: bold;
+  margin-right: 0.5rem;
 }
 
 .community {
