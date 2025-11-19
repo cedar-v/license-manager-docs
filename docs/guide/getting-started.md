@@ -34,7 +34,7 @@ docker-compose -f docker-compose.github.image.yml up
 docker compose -f docker-compose.github.image.yml up
 ```
 
->注意：启动如果报错数据库连接失败，请重启执行启动服务命令一次
+>注意：启动如果报错数据库连接失败，请再次执行启动服务命令一次
 
 ## 访问信息
 
