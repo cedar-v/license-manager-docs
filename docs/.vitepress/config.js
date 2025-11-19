@@ -26,7 +26,8 @@ export default {
               text: '指南',
               items: [
                 { text: '介绍', link: '/guide/' },
-                { text: '快速开始', link: '/guide/getting-started' }
+                    { text: '快速开始', link: '/guide/getting-started' },
+                    { text: '接口文档', link: '/guide/api' }
               ]
             }
           ]
@@ -47,7 +48,8 @@ export default {
               text: 'Guide',
               items: [
                 { text: 'Introduction', link: '/en/guide/' },
-                { text: 'Getting Started', link: '/en/guide/getting-started' }
+                    { text: 'Getting Started', link: '/en/guide/getting-started' },
+                    { text: 'API Reference', link: '/en/guide/api' }
               ]
             }
           ]
@@ -68,7 +70,8 @@ export default {
           text: 'Guide',
           items: [
             { text: 'Introduction', link: '/guide/' },
-            { text: 'Getting Started', link: '/guide/getting-started' }
+            { text: 'Getting Started', link: '/guide/getting-started' },
+            { text: 'API 文档 | API Reference', link: '/guide/api' }
           ]
         }
       ]
