@@ -19,17 +19,22 @@ cp docker-compose.github.image.yml /your/deploy/path/
 ```bash
 # 提取后端配置文件
 mkdir -p backend-config
-docker run --rm -v $(pwd)/backend-config:/tmp/config ghcr.io/cedar-v/license-manager-backend:v0.1.0 sh -c "cp -r /app/backend/configs/* /tmp/config/"
+docker run --rm -v $(pwd)/backend-config:/tmp/config ghcr.io/cedar-v/license-manager-backend:v1.0.0 sh -c "cp -r /app/backend/configs/* /tmp/config/"
 
 # 提取前端 nginx 配置文件
-docker run --rm -v $(pwd):/tmp/extract ghcr.io/cedar-v/license-manager-frontend:v0.1.0 sh -c "cp /etc/nginx/conf.d/default.conf /tmp/extract/nginx.conf"
+docker run --rm -v $(pwd):/tmp/extract ghcr.io/cedar-v/license-manager-frontend:v1.0.0 sh -c "cp /etc/nginx/conf.d/default.conf /tmp/extract/nginx.conf"
 ```
 
 ### 3. 启动服务
 
 ```bash
 docker-compose -f docker-compose.github.image.yml up
+
+# 如果提示命令错误尝试如下
+docker compose -f docker-compose.github.image.yml up
 ```
+
+>注意：启动如果报错数据库连接失败，请重启执行启动服务命令一次
 
 ## 访问信息
 
