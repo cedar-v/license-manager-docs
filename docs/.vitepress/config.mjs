@@ -5,6 +5,9 @@ export default withMermaid(
   defineConfig({
     title: 'License Manager',
     description: 'License Manager Documentation',
+    head: [
+      ['script', { src: 'https://code.iconify.design/iconify-icon/1.0.8/iconify-icon.min.js', defer: '' }]
+    ],
     base: '/', // 使用自定义域名时，base 应该设置为 '/'
 
     // 忽略死链检查
