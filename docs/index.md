@@ -4,7 +4,7 @@ layout: home
 hero:
   name: License Manager
   text: 软件授权管理平台
-  tagline: 为软件系统提供专业的授权码生成、分发、验证和管理服务
+  tagline: 一站式解决授权码生成、发放、验证与全生命周期管理
   image:
     src: /images/logo.png
     alt: License Manager
@@ -22,15 +22,15 @@ hero:
 features:
   - icon: 🔧
     title: 客户管理
-    details: 完整的客户信息管理和状态控制，支持客户信息的增删改查、状态管理、授权关联等核心功能
+    details: 客户档案、联系人、授权关系统一维护，配合状态与风控策略
     
   - icon: 🔐
     title: 授权生成
-    details: 支持在线/离线授权模式，基于硬件指纹绑定的授权机制确保安全性
+    details: 支持在线/离线授权、批量发放、硬件指纹绑定与密钥加密
     
   - icon: 📊
     title: 授权管理
-    details: 实时状态监控和授权生命周期管理，全面掌控授权状态
+    details: 生命周期可视化、到期提醒、锁定/解锁、日志审计一应俱全
     
   - icon: 📦
     title: 部署包生成
@@ -38,11 +38,11 @@ features:
     
   - icon: 🌐
     title: API服务
-    details: 提供验证、激活、心跳监控等完善的RESTful API接口
+    details: 验证、激活、心跳、租户隔离等 RESTful API，易于系统集成
     
   - icon: ⚡
     title: 高性能
-    details: Go原生协程支持10,000+并发，API响应时间<50ms，内存占用<100MB
+    details: Go 原生协程支撑 10,000+ 并发，API 响应 <50ms，内存 <100MB
     
   - icon: 🔒
     title: 安全可靠
