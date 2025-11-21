@@ -35,6 +35,7 @@ export default withMermaid(
                   { text: '介绍', link: '/guide/' },
                   { text: '快速开始', link: '/guide/getting-started' },
                   { text: '许可证结构与验证（客户端要点）', link: '/guide/license-token-structure' },
+                  { text: '商业价值', link: '/guide/business_value' },
                   { text: '接口文档', link: '/guide/api' }
                 ]
               }
@@ -57,6 +58,7 @@ export default withMermaid(
                 items: [
                   { text: 'Introduction', link: '/en/guide/' },
                   { text: 'Getting Started', link: '/en/guide/getting-started' },
+                  { text: 'Business Value', link: '/en/guide/business_value' },
                   { text: 'License Structure & Validation', link: '/en/guide/license-token-structure' },
                   { text: 'API Reference', link: '/en/guide/api' }
                 ]
