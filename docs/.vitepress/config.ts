@@ -1,6 +1,4 @@
-import { defineConfig } from 'vitepress'
-
-export default defineConfig({
+export default ({
   // 网站基本信息
   title: 'License Manager',
   lang: 'zh-CN',
