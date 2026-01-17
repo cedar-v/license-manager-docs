@@ -1,0 +1,29 @@
+{
+  "name": "License Manager - 专业软件授权管理系统",
+  "short_name": "License Manager",
+  "description": "企业级软件授权管理系统，支持在线/离线授权，硬件绑定保护",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#3b82f6",
+  "orientation": "portrait-primary",
+  "categories": ["productivity", "developer-tools"],
+  "lang": "zh-CN",
+  "icons": [
+    {
+      "src": "/images/logo.png",
+      "sizes": "32x32",
+      "type": "image/png"
+    },
+    {
+      "src": "/images/logo.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/images/logo.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

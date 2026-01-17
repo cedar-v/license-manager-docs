@@ -1,10 +1,15 @@
 # Introduction
 
-License Manager is an independent software licensing management system that provides license code generation, distribution, validation, and management services for software systems. It supports both online and offline licensing modes, with hardware-based binding mechanisms ensuring security.
+License Manager is an independent software licensing management system that provides license code generation, distribution, validation, and management services for software systems. The system supports both enterprise-level management backend and user-end self-service, supporting both online and offline licensing modes, with hardware-based binding mechanisms ensuring security.
 
 ## System Overview
 
-License Manager is an enterprise-grade software licensing management solution that helps software vendors achieve a complete lifecycle management cycle from license generation, distribution, validation to full lifecycle management. The system adopts a frontend-backend separation architecture, providing an intuitive management interface and rich API interfaces, supporting multiple deployment modes to meet licensing management needs in different scenarios.
+License Manager is an enterprise-grade software licensing management solution that provides dual-end service modes:
+
+- **Enterprise End**: Helps software vendors achieve a complete lifecycle management cycle from license generation, distribution, validation to full lifecycle management
+- **User End**: Provides end users with convenient self-service for purchasing, activating, and managing licenses, supporting mobile phone registration, online payment, device binding and other functions
+
+The system adopts a frontend-backend separation architecture, providing an intuitive management interface and rich API interfaces, supporting multiple deployment modes to meet licensing management needs in different scenarios.
 
 ## Core Features
 
@@ -27,6 +32,14 @@ License Manager is an enterprise-grade software licensing management solution th
 - **License Generation**: Batch generation, custom validity periods, feature restriction configuration
 - **Status Monitoring**: Real-time license status viewing, usage statistics
 - **Operation Auditing**: Complete operation log records for traceability and auditing
+
+### 👤 User Self-Service
+
+- **Self-Service Purchase**: Users register and log in via mobile phone, select packages and device quantities, pay via Alipay
+- **One-Click Activation**: After obtaining license code, open the software product and enter the license code, system automatically binds device and activates
+- **Order Management**: Support viewing order history, applying for invoices and other services
+- **Device Management**: Support viewing bound devices, unbinding unnecessary devices
+- **Auto Renewal**: Support heartbeat monitoring and automatic renewal reminders
 
 ### 🚀 Easy Integration
 
@@ -104,6 +117,8 @@ sequenceDiagram
 - **Embedded Systems**: Require offline verification without network dependency
 - **API Services**: Need to control usage limits such as call counts, concurrency, etc.
 - **Software Trials**: Provide trial period licenses with automatic feature restrictions upon expiration
+- **Individual User Software**: Support user self-service purchase, online payment, device binding activation
+- **Multi-Device Management**: Support single user using on multiple devices, support device unbinding and reallocation
 
 
 ## Next Steps

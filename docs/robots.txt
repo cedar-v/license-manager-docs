@@ -1,0 +1,13 @@
+User-agent: *
+Allow: /
+
+# 允许搜索引擎索引所有内容
+Allow: /guide/
+Allow: /en/
+
+# 阻止索引一些不重要的路径
+Disallow: /node_modules/
+Disallow: /.vitepress/
+
+# Sitemap
+Sitemap: https://lm.cedar-v.com/sitemap.xml

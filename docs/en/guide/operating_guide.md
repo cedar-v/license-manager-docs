@@ -13,9 +13,13 @@ This guide walks through the complete lifecycle of License Manager: “create li
 
 ## End-to-End Flow
 
+License Manager supports two operation flows: traditional B2B flow (for enterprise customers) and user-end self-service flow (for individual users).
+
+### Traditional B2B Flow
+
 ```mermaid
 graph TD
-    A[Create License Policy] --> B[Generate License Code]
+    A[Admin creates license policy] --> B[Generate License Code]
     B --> C{Deployment Mode?}
     C -->|Online/Hybrid| D[Customer enters code<br/>+ auto activation]
     C -->|Offline| E[Collect fingerprint<br/>Generate license]
@@ -29,6 +33,33 @@ graph TD
 2. **Distribute code / license**: Share the license code or offline license package depending on deployment mode.
 3. **Customer activation**: The client bundles license code + fingerprint to exchange for a license, or loads an offline license directly.
 4. **In-life management**: Monitor heartbeats, enforce revocations, trigger renewals, or increase capacity as needed.
+
+### User-End Self-Service Flow
+
+```mermaid
+graph TD
+    A[User mobile login] --> B[Select package & device count]
+    B --> C[Alipay payment]
+    C --> D[Order management]
+    D --> E{Action needed?}
+    E -->|Apply invoice| F[Apply for invoice]
+    E -->|Get license code| G[Get license code]
+    F --> G
+    G --> H[Open product & enter code<br/>Auto device binding activation]
+    H --> I[Device management]
+    I --> J{Action needed?}
+    J -->|Unbind device| K[Remove device]
+    K --> I
+    I --> L[Heartbeat monitoring & auto renewal]
+```
+
+1. **User registration**: Users register and log in via mobile phone number.
+2. **Package selection**: Browse available packages and select required feature modules and device quantities.
+3. **Payment**: Complete online payment via Alipay.
+4. **Order management**: Apply for invoices and obtain corresponding license codes in order management.
+5. **Product activation**: Users open the software product, enter the license code, and the system automatically binds the current device fingerprint for activation.
+6. **Device management**: View bound devices and unbind unnecessary devices.
+7. **Monitoring**: System monitors device status through heartbeat mechanism and supports automatic renewal.
 
 ## Business Scenarios
 

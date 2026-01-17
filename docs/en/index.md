@@ -73,6 +73,16 @@ hero:
     </div>
   </article>
 
+  <article class="lm-feature-card" style="--accent-from:#a855f7; --accent-to:#ec4899;">
+    <div class="lm-feature-icon">
+      <iconify-icon icon="solar:user-hand-up-bold-duotone"></iconify-icon>
+    </div>
+    <div>
+      <h3>User Self-Service</h3>
+      <p>Mobile registration, online purchase & payment, device binding activation, order & invoice management.</p>
+    </div>
+  </article>
+
   <article class="lm-feature-card" style="--accent-from:#f43f5e; --accent-to:#fb7185;">
     <div class="lm-feature-icon">
       <iconify-icon icon="solar:rocket-bold-duotone"></iconify-icon>
@@ -163,9 +173,10 @@ Check out the [Getting Started Guide](/en/guide/getting-started) for detailed de
 This project is licensed under the [GPL-3.0](https://www.gnu.org/licenses/gpl-3.0.html) license
 
 - ✅ Free to use, study, modify, and distribute
-- ✅ Commercial use allowed
+- ✅ Personal and commercial use allowed
+- ⚠️ Logo, trademarks and other brand elements may not be modified when used under open source license
 - ⚠️ Derivative works must also be open source
-- ℹ️ For proprietary licenses or commercial support, please contact the maintainers
+- ℹ️ For proprietary licenses, brand customization, or commercial support, please contact the maintainers
 
 ## Join Community
 

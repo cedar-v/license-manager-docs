@@ -73,6 +73,16 @@ hero:
     </div>
   </article>
 
+  <article class="lm-feature-card" style="--accent-from:#a855f7; --accent-to:#ec4899;">
+    <div class="lm-feature-icon">
+      <iconify-icon icon="solar:user-hand-up-bold-duotone"></iconify-icon>
+    </div>
+    <div>
+      <h3>用户自助服务</h3>
+      <p>手机号注册登录、在线购买支付、设备绑定激活、订单发票管理。</p>
+    </div>
+  </article>
+
   <article class="lm-feature-card" style="--accent-from:#f43f5e; --accent-to:#fb7185;">
     <div class="lm-feature-icon">
       <iconify-icon icon="solar:rocket-bold-duotone"></iconify-icon>
@@ -163,9 +173,10 @@ hero:
 本项目采用 [GPL-3.0](https://www.gnu.org/licenses/gpl-3.0.html) 开源许可证
 
 - ✅ 自由使用、学习、修改和分发
-- ✅ 允许商业使用
+- ✅ 允许个人和商业使用
+- ⚠️ 开源使用时不得修改logo、商标等品牌元素
 - ⚠️ 衍生作品必须同样开源
-- ℹ️ 如需专有许可证或商业支持，请联系项目维护者
+- ℹ️ 如需专有许可证、品牌定制或商业支持，请联系项目维护者
 
 ## 加入社区
 
