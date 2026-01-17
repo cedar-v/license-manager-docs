@@ -45,7 +45,7 @@ export default defineConfig({
     ['meta', { name: 'apple-mobile-web-app-title', content: 'License Manager' }],
 
     // 百度SEO优化 - 请替换为你的实际百度验证代码
-    // ['meta', { name: 'baidu-site-verification', content: '你的验证代码' }],
+    ['meta', { name: 'baidu-site-verification', content: 'codeva-3kpa9ujDyB' }],
     ['meta', { name: 'renderer', content: 'webkit' }],
     ['meta', { name: 'applicable-device', content: 'pc,mobile' }],
 
