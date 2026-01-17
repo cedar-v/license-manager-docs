@@ -7,7 +7,7 @@
 2. 注册账号并登录
 3. 点击"添加网站"
 4. 填写网站信息：
-   - 网站域名：`lm.cedar-v.com`
+   - 网站域名：`docs.lm.cedar-v.com`
    - 网站名称：`License Manager`
 5. 复制统计代码中的ID（格式类似：`12345678`）
 
@@ -23,7 +23,7 @@ hm.src = "https://hm.baidu.com/hm.js?你的统计ID";
 ### 获取验证代码
 1. 访问 [百度搜索资源平台](https://ziyuan.baidu.com/)
 2. 登录账号
-3. 添加站点 `lm.cedar-v.com`
+3. 添加站点 `docs.lm.cedar-v.com`
 4. 获取验证代码
 
 ### 配置验证代码
@@ -33,14 +33,16 @@ hm.src = "https://hm.baidu.com/hm.js?你的统计ID";
 ['meta', { name: 'baidu-site-verification', content: '你的验证代码' }],
 ```
 
-### HTML文件验证（备用）
-如果需要HTML文件验证，将 `docs/baidu_verify.html` 文件中的 `YOUR_BAIDU_VERIFY_ID` 替换为验证ID。
+### HTML文件验证（可选）
+百度支持“验证文件”方式：平台会给你一个**指定文件名**（通常形如 `baidu_verify_xxx.html`）和文件内容要求。
+
+如果你选择这种方式：在 `docs/public/` 下新建对应文件（文件名和内容都按百度提供的来），构建后它会出现在站点根路径（`/baidu_verify_xxx.html`）。
 
 ## 3. 网站提交
 
 ### 提交Sitemap
-1. 在百度搜索资源平台提交 sitemap：`https://lm.cedar-v.com/sitemap.xml`
-2. 提交robots.txt：`https://lm.cedar-v.com/robots.txt`
+1. 在百度搜索资源平台提交 sitemap：`https://docs.lm.cedar-v.com/sitemap.xml`
+2. 提交robots.txt：`https://docs.lm.cedar-v.com/robots.txt`
 
 ### 主动推送
 可以使用百度链接提交工具推送重要页面。

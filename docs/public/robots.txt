@@ -31,7 +31,7 @@ Disallow: /.github/
 Disallow: /dist/
 
 # XML Sitemap
-Sitemap: https://lm.cedar-v.com/sitemap.xml
+Sitemap: https://docs.lm.cedar-v.com/sitemap.xml
 
 # HTML Sitemap
-Sitemap: https://lm.cedar-v.com/sitemap.html
+Sitemap: https://docs.lm.cedar-v.com/sitemap.html
