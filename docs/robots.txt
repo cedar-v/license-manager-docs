@@ -1,13 +1,37 @@
+# Robots.txt for License Manager
+
+# 百度爬虫特殊配置
+User-agent: Baiduspider
+Allow: /
+Crawl-delay: 1
+
+# 360搜索爬虫
+User-agent: 360Spider
+Allow: /
+Crawl-delay: 1
+
+# 搜狗爬虫
+User-agent: Sogou web spider
+Allow: /
+Crawl-delay: 1
+
+# 其他搜索引擎
 User-agent: *
 Allow: /
 
 # 允许搜索引擎索引所有内容
 Allow: /guide/
 Allow: /en/
+Allow: /docs-blog/
 
 # 阻止索引一些不重要的路径
 Disallow: /node_modules/
 Disallow: /.vitepress/
+Disallow: /.github/
+Disallow: /dist/
 
-# Sitemap
+# XML Sitemap
 Sitemap: https://lm.cedar-v.com/sitemap.xml
+
+# HTML Sitemap
+Sitemap: https://lm.cedar-v.com/sitemap.html
