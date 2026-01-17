@@ -4,8 +4,23 @@ import { withMermaid } from 'vitepress-plugin-mermaid'
 export default withMermaid(
   defineConfig({
     title: 'License Manager',
+    lang: 'zh-CN',
     description: 'License Manager Documentation',
     head: [
+      ['link', { rel: 'icon', type: 'image/png', href: '/images/logo.png' }],
+      ['link', { rel: 'apple-touch-icon', href: '/images/logo.png' }],
+      ['meta', { name: 'baidu-site-verification', content: 'codeva-3kpa9ujDyB' }],
+      [
+        'script',
+        {},
+        `var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "https://hm.baidu.com/hm.js?0bb0e3047706f56c57a9faf920fcde2a";
+  var s = document.getElementsByTagName("script")[0];
+  s.parentNode.insertBefore(hm, s);
+})();`
+      ],
       ['script', { src: 'https://code.iconify.design/iconify-icon/1.0.8/iconify-icon.min.js', defer: '' }]
     ],
     base: '/', // 使用自定义域名时，base 应该设置为 '/'

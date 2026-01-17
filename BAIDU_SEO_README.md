@@ -12,7 +12,7 @@
 5. 复制统计代码中的ID（格式类似：`12345678`）
 
 ### 配置统计代码
-在 `.vitepress/config.ts` 文件中，将 `YOUR_BAIDU_ANALYTICS_ID` 替换为实际的统计ID：
+在 `docs/.vitepress/config.mjs` 文件中配置统计代码（`head`），将统计 ID 替换为实际的统计ID：
 
 ```typescript
 hm.src = "https://hm.baidu.com/hm.js?你的统计ID";
@@ -27,7 +27,7 @@ hm.src = "https://hm.baidu.com/hm.js?你的统计ID";
 4. 获取验证代码
 
 ### 配置验证代码
-在 `.vitepress/config.ts` 文件中，将 `YOUR_BAIDU_VERIFICATION_CODE` 替换为实际的验证代码：
+在 `docs/.vitepress/config.mjs` 文件中配置验证代码（`head`），将验证代码替换为实际的验证代码：
 
 ```typescript
 ['meta', { name: 'baidu-site-verification', content: '你的验证代码' }],
