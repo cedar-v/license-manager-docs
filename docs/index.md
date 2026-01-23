@@ -264,3 +264,19 @@ hero:
   </a>
 </div>
 
+## 开源社区
+
+<div class="contact-section">
+  <div class="contact-content">
+    <div class="contact-text">
+      <h3>加入开源社区</h3>
+      <p>欢迎加入我们的开源社区，与开发者交流技术心得</p>
+      <p>扫描下方二维码，加入微信群讨论License Manager相关话题</p>
+    </div>
+    <div class="contact-qrcode">
+      <img src="/images/qrcode_1755081220153.jpg" alt="开源社区群二维码" width="200" height="200">
+      <p class="qrcode-label">开源社区群</p>
+    </div>
+  </div>
+</div>
+

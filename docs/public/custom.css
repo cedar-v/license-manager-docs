@@ -463,6 +463,70 @@ h3 {
   }
 }
 
+/* Contact Section */
+.contact-section {
+  margin: 5rem 0 3rem;
+  text-align: center;
+}
+
+.contact-content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4rem;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 3rem;
+  border-radius: 1.5rem;
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+}
+
+.contact-text {
+  flex: 1;
+  text-align: left;
+}
+
+.contact-text h3 {
+  margin: 0 0 1rem 0;
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--vp-c-text-1);
+  letter-spacing: -0.02em;
+}
+
+.contact-text p {
+  margin: 0 0 1rem 0;
+  color: var(--vp-c-text-2);
+  line-height: 1.7;
+  font-size: 1rem;
+}
+
+.contact-qrcode {
+  flex-shrink: 0;
+  text-align: center;
+}
+
+.contact-qrcode img {
+  border-radius: 1rem;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+  border: 3px solid rgba(255, 255, 255, 0.8);
+  transition: transform 0.3s ease;
+}
+
+.contact-qrcode img:hover {
+  transform: scale(1.05);
+}
+
+.qrcode-label {
+  margin: 1rem 0 0 0;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--vp-c-text-1);
+}
+
 /* Dark mode adjustments */
 @media (prefers-color-scheme: dark) {
   .value-card,
@@ -470,7 +534,8 @@ h3 {
   .use-case-item,
   .commercialization-item,
   .architecture-item,
-  .quick-start-link {
+  .quick-start-link,
+  .contact-content {
     background: rgba(30, 30, 30, 0.8);
     border-color: rgba(255, 255, 255, 0.1);
   }
@@ -482,5 +547,28 @@ h3 {
   .architecture-item:hover,
   .quick-start-link:hover {
     background: rgba(30, 30, 30, 0.9);
+  }
+
+  .contact-qrcode img {
+    border-color: rgba(255, 255, 255, 0.3);
+  }
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+  .contact-content {
+    flex-direction: column;
+    gap: 2rem;
+    padding: 2rem;
+    text-align: center;
+  }
+
+  .contact-text {
+    text-align: center;
+  }
+
+  .contact-qrcode img {
+    width: 150px;
+    height: 150px;
   }
 }
