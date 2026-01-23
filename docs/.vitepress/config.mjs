@@ -103,7 +103,7 @@ export default withMermaid(
       ],
 
       ['script', { src: 'https://code.iconify.design/iconify-icon/2.1.0/iconify-icon.min.js' }],
-      ['link', { rel: 'stylesheet', href: '/.vitepress/custom.css' }]
+      ['link', { rel: 'stylesheet', href: '/custom.css' }]
     ],
     base: '/', // 使用自定义域名时，base 应该设置为 '/'
 
