@@ -264,18 +264,35 @@ hero:
   </a>
 </div>
 
-## 开源社区
+## 社区与支持
 
-<div class="contact-section">
-  <div class="contact-content">
-    <div class="contact-text">
-      <h3>加入开源社区</h3>
-      <p>欢迎加入我们的开源社区，与开发者交流技术心得</p>
-      <p>扫描下方二维码，加入微信群讨论License Manager相关话题</p>
+<div class="community-support-section">
+  <div class="community-grid">
+    <div class="community-card">
+      <div class="community-content">
+        <div class="community-text">
+          <h3>开源社区</h3>
+          <p>欢迎加入我们的开源社区，与开发者交流技术心得</p>
+          <p>扫描下方二维码，加入QQ群讨论License Manager相关话题</p>
+        </div>
+        <div class="community-qrcode">
+          <img src="/images/qrcode_1755081220153.jpg" alt="开源社区群二维码" width="150" height="150">
+          <p class="qrcode-label">开源社区群</p>
+        </div>
+      </div>
     </div>
-    <div class="contact-qrcode">
-      <img src="/images/qrcode_1755081220153.jpg" alt="开源社区群二维码" width="200" height="200">
-      <p class="qrcode-label">开源社区群</p>
+    <div class="community-card">
+      <div class="community-content">
+        <div class="community-text">
+          <h3>技术支持</h3>
+          <p>需要商业咨询或技术支持服务？</p>
+          <p>扫描下方二维码，联系我们的技术团队获取专业帮助</p>
+        </div>
+        <div class="community-qrcode">
+          <img src="/images/qrcode_1755081220153.jpg" alt="技术支持二维码" width="150" height="150">
+          <p class="qrcode-label">技术支持</p>
+        </div>
+      </div>
     </div>
   </div>
 </div>
