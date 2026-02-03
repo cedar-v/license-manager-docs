@@ -16,6 +16,9 @@ hero:
       text: 在线演示
       link: http://lm.cedar-v.com:18080
     - theme: alt
+      text: 官网
+      link: https://www.cedar-v.com
+    - theme: alt
       text: 查看源码
       link: https://github.com/cedar-v/license-manager
 ---
@@ -240,6 +243,16 @@ hero:
     <div class="quick-start-content">
       <h4>查看文档</h4>
       <p>详细的部署和使用指南</p>
+    </div>
+  </a>
+
+  <a href="https://www.cedar-v.com" class="quick-start-link">
+    <div class="quick-start-icon">
+      <iconify-icon icon="solar:global-bold-duotone" width="32" height="32"></iconify-icon>
+    </div>
+    <div class="quick-start-content">
+      <h4>访问官网</h4>
+      <p>了解产品详情和最新动态</p>
     </div>
   </a>
 
