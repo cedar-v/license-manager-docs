@@ -4,7 +4,12 @@ License Manager 提供可复用的客户端 SDK，涵盖许可证解析、验签
 
 ## 快速入口
 
-- GitHub 仓库（含 README、示例与 API 说明）：[https://github.com/cedar-v/license-manager-sdk-go](https://github.com/cedar-v/license-manager-sdk-go)
+目前官方提供了以下语言的客户端 SDK 仓库（含 README、示例与 API 说明）：
+
+- **Go SDK**: [https://github.com/cedar-v/license-manager-sdk-go](https://github.com/cedar-v/license-manager-sdk-go)
+- **Python SDK**: [https://github.com/cedar-v/license-manager-sdk-python](https://github.com/cedar-v/license-manager-sdk-python)
+  - PyPI 安装: `pip install cedarv-license-manager-sdk`
+
 - 许可证结构参考：[`/guide/license-token-structure`](/guide/license-token-structure)
 
 > SDK 具体使用方法（安装、配置、代码示例等）请直接参考仓库 README；这里只保留索引，确保信息只维护一份。
