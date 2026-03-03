@@ -3,7 +3,7 @@ layout: home
 
 hero:
   name: License Manager
-  text: 企业级软件授权管理平台
+  text: 企业级软件授权管理系统
   tagline: 构建完整的软件商业化生态 · 全生命周期授权管理解决方案
   image:
     src: /images/logo.png
