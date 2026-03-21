@@ -14,7 +14,7 @@ hero:
       link: /en/guide/getting-started
     - theme: alt
       text: Live Demo
-      link: http://lm.cedar-v.com:18080
+      link: http://lm.cedar-v.com
     - theme: alt
       text: GitHub
       link: https://github.com/cedar-v/license-manager
@@ -116,7 +116,7 @@ hero:
 
 ## Live Demo
 
-Access: [lm.cedar-v.com:18080](http://lm.cedar-v.com:18080)
+Access: [lm.cedar-v.com](http://lm.cedar-v.com)
 
 **Login Credentials:**
 - Username: `admin`

@@ -14,7 +14,7 @@ hero:
       link: /guide/getting-started
     - theme: alt
       text: 在线演示
-      link: http://lm.cedar-v.com:18080
+      link: http://lm.cedar-v.com
     - theme: alt
       text: 官网
       link: https://www.cedar-v.com
@@ -256,7 +256,7 @@ hero:
     </div>
   </a>
 
-  <a href="http://lm.cedar-v.com:18080" class="quick-start-link">
+  <a href="http://lm.cedar-v.com" class="quick-start-link">
     <div class="quick-start-icon">
       <iconify-icon icon="solar:play-circle-bold-duotone" width="32" height="32"></iconify-icon>
     </div>
