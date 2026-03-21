@@ -122,7 +122,8 @@ export default withMermaid(
         themeConfig: {
           nav: [
             { text: '首页', link: '/' },
-            { text: '指南', link: '/guide/' }
+            { text: '指南', link: '/guide/' },
+            { text: '客户案例', link: '/guide/cases/machine-vision-licensing' }
           ],
           sidebar: {
             '/guide/': [
@@ -139,6 +140,12 @@ export default withMermaid(
                   { text: '接口文档', link: '/guide/api' },
                   { text: '社区发展策略', link: '/guide/community_strategy' }
                 ]
+              },
+              {
+                text: '客户案例',
+                items: [
+                  { text: '机器视觉检测软件的灵活授权方案', link: '/guide/cases/machine-vision-licensing' }
+                ]
               }
             ]
           }
@@ -151,7 +158,8 @@ export default withMermaid(
         themeConfig: {
           nav: [
             { text: 'Home', link: '/en/' },
-            { text: 'Guide', link: '/en/guide/' }
+            { text: 'Guide', link: '/en/guide/' },
+            { text: 'Case Studies', link: '/en/guide/cases/machine-vision-licensing' }
           ],
           sidebar: {
             '/en/guide/': [
@@ -167,6 +175,12 @@ export default withMermaid(
                   { text: 'License Structure & Validation', link: '/en/guide/license-token-structure' },
                   { text: 'API Reference', link: '/en/guide/api' },
                   { text: 'Community Strategy', link: '/en/guide/community_strategy' }
+                ]
+              },
+              {
+                text: 'Case Studies',
+                items: [
+                  { text: 'Flexible Licensing for Machine Vision Inspection', link: '/en/guide/cases/machine-vision-licensing' }
                 ]
               }
             ]
