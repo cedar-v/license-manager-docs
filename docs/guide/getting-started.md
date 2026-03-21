@@ -1,5 +1,11 @@
 # 快速开始
 
+## 立即体验
+
+访问 [lm.cedar-v.com](http://lm.cedar-v.com) 立即体验。
+- 用户名：admin
+- 密码：admin@123
+
 ## GitHub 镜像快速部署指南
 
 ### 1. 获取部署文件
