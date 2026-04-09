@@ -6,7 +6,7 @@
 
 ### ⬇️ 下载体验
 
-- **Windows 64位 独立可执行程序**: [LMClientSimulator-win64.exe](https://github.com/cedar-v/license-manager-sdk-python/releases/download/v1.0.1/LMClientSimulator-win64.exe)
+- **Windows 64位 独立可执行程序**: [LMClientSimulator-win64.exe](https://github.com/cedar-v/license-manager-sdk-python/releases/download/v1.0.3/LMClientSimulator-win64.exe)
 
 ## 界面概览
 
