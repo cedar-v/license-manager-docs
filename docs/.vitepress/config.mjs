@@ -123,7 +123,8 @@ export default withMermaid(
           nav: [
             { text: '首页', link: '/' },
             { text: '指南', link: '/guide/' },
-            { text: '客户案例', link: '/guide/cases/machine-vision-licensing' }
+            { text: '战略洞察', link: '/guide/why/' },
+            { text: '客户案例', link: '/guide/cases/indie-developer-monetization' }
           ],
           sidebar: {
             '/guide/': [
@@ -136,15 +137,22 @@ export default withMermaid(
                   { text: '许可证结构与验证（客户端要点）', link: '/guide/license-token-structure' },
                   { text: '客户端 SDK', link: '/guide/sdk' },
                   { text: '客户端授权测试工具', link: '/guide/client-simulator' },
-                  { text: '商业价值', link: '/guide/business_value' },
                   { text: '接口文档', link: '/guide/api' },
                   { text: '社区发展策略', link: '/guide/community_strategy' }
                 ]
               },
               {
+                text: '战略洞察',
+                items: [
+                  { text: '代码之上是资产：战略价值与意义', link: '/guide/why/software-asset-strategic-value/' },
+                  { text: '为什么需要授权管理系统', link: '/guide/why/why-you-need-license-management/' }
+                ]
+              },
+              {
                 text: '客户案例',
                 items: [
-                  { text: '机器视觉检测软件的灵活授权方案', link: '/guide/cases/machine-vision-licensing' }
+                  { text: '机器视觉检测软件的灵活授权方案', link: '/guide/cases/machine-vision-licensing' },
+                  { text: '独立开发者的即时变现之路', link: '/guide/cases/indie-developer-monetization' }
                 ]
               }
             ]
@@ -159,7 +167,8 @@ export default withMermaid(
           nav: [
             { text: 'Home', link: '/en/' },
             { text: 'Guide', link: '/en/guide/' },
-            { text: 'Case Studies', link: '/en/guide/cases/machine-vision-licensing' }
+            { text: 'Strategic Insights', link: '/en/guide/why/' },
+            { text: 'Case Studies', link: '/en/guide/cases/indie-developer-monetization' }
           ],
           sidebar: {
             '/en/guide/': [
@@ -171,16 +180,24 @@ export default withMermaid(
                   { text: 'Operating Guide', link: '/en/guide/operating_guide' },
                   { text: 'Client SDK', link: '/en/guide/sdk' },
                   { text: 'Client Authorization Test Tool', link: '/en/guide/client-simulator' },
-                  { text: 'Business Value', link: '/en/guide/business_value' },
                   { text: 'License Structure & Validation', link: '/en/guide/license-token-structure' },
                   { text: 'API Reference', link: '/en/guide/api' },
                   { text: 'Community Strategy', link: '/en/guide/community_strategy' }
                 ]
               },
               {
+                text: 'Strategic Insights',
+                items: [
+                  { text: 'Strategic Insights', link: '/en/guide/why/' },
+                  { text: 'Why You Need a License Management System', link: '/en/guide/why/why-you-need-license-management/' },
+                  { text: 'Software Asset Strategic Value', link: '/en/guide/why/software-asset-strategic-value/' }
+                ]
+              },
+              {
                 text: 'Case Studies',
                 items: [
-                  { text: 'Flexible Licensing for Machine Vision Inspection', link: '/en/guide/cases/machine-vision-licensing' }
+                  { text: 'Flexible Licensing for Machine Vision Inspection', link: '/en/guide/cases/machine-vision-licensing' },
+                  { text: "Independent Developer's Instant Monetization", link: '/en/guide/cases/indie-developer-monetization' }
                 ]
               }
             ]
