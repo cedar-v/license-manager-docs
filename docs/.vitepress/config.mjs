@@ -123,8 +123,8 @@ export default withMermaid(
           nav: [
             { text: '首页', link: '/' },
             { text: '指南', link: '/guide/' },
-            { text: '战略洞察', link: '/guide/why/' },
-            { text: '客户案例', link: '/guide/cases/indie-developer-monetization' }
+            { text: '战略洞察', link: '/guide/why/software-asset-strategic-value.md' },
+            { text: '客户案例', link: '/guide/cases/machine-vision-licensing' }
           ],
           sidebar: {
             '/guide/': [
