@@ -132,6 +132,7 @@ export default withMermaid(
                 text: '指南',
                 items: [
                   { text: '介绍', link: '/guide/' },
+                  { text: '功能介绍', link: '/guide/features' },
                   { text: '快速开始', link: '/guide/getting-started' },
                   { text: '操作指南', link: '/guide/operating_guide' },
                   { text: '许可证结构与验证（客户端要点）', link: '/guide/license-token-structure' },

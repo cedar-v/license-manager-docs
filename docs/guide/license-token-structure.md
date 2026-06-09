@@ -1,116 +1,164 @@
-
 # 许可证结构与验证（客户端要点）
 
-本系统生成的许可证是一个 **Base64 编码的 JSON 对象**。客户端在启动阶段需要解码该字符串，并据此完成授权校验、硬件绑定判定及密钥验签。下方内容按照「流程 → 数据结构 → 示例 → 验证步骤」的顺序组织，便于查阅。
+本文档基于当前项目代码中的实际激活流程整理，重点说明**激活接口返回什么、客户端应如何保存和校验许可证、在线与离线模式下分别关注什么**。
 
-## 1. 启动阶段流程概览
+先说最关键的一点：**当前系统里，客户端不需要先单独调用“下载公钥”接口，再去下载许可证。激活接口本身会同时返回 `license_file` 和 `public_key`。** 客户端拿到这两个字段后，就可以完成本地验签和许可证落盘。
 
-先从整体流程入手：以下 Mermaid 流程图展示了客户端拿到许可证字符串后的关键校验路径，帮助定位每一步需要完成的动作与可能的失败分支。
+## 激活流程概览
+
+从客户端视角看，实际流程如下：
 
 ```mermaid
 flowchart TD
-    %% 节点定义
-    Start([客户端启动]) --> GetToken[获取 Base64 许可证字符串]
-    GetToken --> Decode[Base64 解码]
-    
-    Decode --> ParseJSON{JSON 结构解析?}
-    ParseJSON -- 失败 --> ErrFormat[❌ 停止: 格式错误]
-    ParseJSON -- 成功 --> Extract[提取核心字段: <br/>data, signature, algorithm]
-
-    %% 签名验证阶段
-    Extract --> VerifySig[[RSA 签名验证]]
-    VerifySig -- 签名不匹配 --> ErrTamper[❌ 停止: 许可证被篡改]
-    VerifySig -- 验证通过 --> ParseData[反序列化 data 字符串]
-
-    %% 业务逻辑检查阶段
-    ParseData --> CheckStatus{检查 Status & 有效期}
-    
-    CheckStatus -- "Locked / Expired" --> ErrStatus[❌ 停止: 授权被锁或过期]
-    CheckStatus -- "Normal & 有效期内" --> CheckType{判断 Deployment Type}
-
-    %% 部署类型分支
-    CheckType -- "standalone (单机)" --> CheckHW{本地硬件指纹比对}
-    CheckType -- "cloud / hybrid" --> CheckNet{联网/心跳验证}
-
-    %% 最终结果
-    CheckHW -- 不匹配 --> ErrHW[❌ 停止: 设备指纹不符]
-    CheckNet -- 验证失败 --> ErrNet[❌ 停止: 服务端拒绝]
-    
-    CheckHW -- 匹配 --> Success([✅ 校验通过: 允许运行软件])
-    CheckNet -- 验证成功 --> Success
-
-    %% 样式定义 (可选，用于美化)
-    classDef error fill:#f9f2f4,stroke:#c00,stroke-width:2px,color:#c00;
-    classDef success fill:#e1fdf4,stroke:#009966,stroke-width:2px,color:#009966;
-    classDef process fill:#f9f9f9,stroke:#333,stroke-width:1px;
-
-    class ErrFormat,ErrTamper,ErrStatus,ErrHW,ErrNet error;
-    class Success success;
-    class Decode,VerifySig,ParseData,CheckHW,CheckNet process;
+    A[客户端准备授权码与硬件指纹] --> B[调用激活接口]
+    B --> C[服务端校验授权码与激活条件]
+    C --> D[服务端生成或复用许可证]
+    D --> E[激活接口返回 license_file]
+    E --> F[激活接口同时返回 public_key]
+    F --> G[客户端保存许可证与公钥]
+    G --> H[客户端本地验签与状态校验]
+    H --> I[允许运行]
 ```
 
-## 2. 许可证顶层结构
+这里有两个操作要点：
 
-当您对许可证字符串完成 Base64 解码后，将得到一个包含三个核心字段的 JSON 对象。该结构设计确保了数据的可视性（明文数据）与安全性（加密签名）。
+- `license_file` 是客户端后续本地校验时真正使用的许可证数据
+- `public_key` 是客户端用于验签该许可证的公钥
 
-### 顶级字段说明
+也就是说，**激活成功 = 许可证和验签公钥一起下发给客户端**。
 
-| 字段名 (Field) | 类型 | 说明 |
-| :--- | :--- | :--- |
-| **`algorithm`** | String | 用于生成签名的加密算法（例如：`RSA-PSS-SHA256`）。 |
-| **`data`** | String | **核心授权载体**。这是一个被序列化为字符串的 JSON 对象，包含了具体的授权规则、时间限制和硬件指纹。 |
-| **`signature`** | String | 针对 `data` 字段生成的加密签名（Base64 格式）。客户端需使用公钥验证此签名，以确保授权信息未被篡改。 |
+## 激活接口返回结构
 
------
+根据当前后端 `ActivateResponse` 的定义，激活接口会返回以下字段：
 
-## 3. `data` Payload 详解
+| 字段名 | 类型 | 说明 |
+|---|---|---|
+| `license_key` | String | 许可证唯一标识，用于后续心跳、日志和服务端查询 |
+| `license_file` | String | Base64 编码的许可证内容，客户端需要保存并用于本地校验 |
+| `heartbeat_interval` | Int | 心跳间隔，单位秒 |
+| `public_key` | String | 用于验证当前许可证签名的 RSA 公钥（PEM 格式） |
 
-`data` 字段是许可证的核心载荷。解析该 JSON 字符串后，客户端可获得决定软件行为的全部控制参数。
+这意味着客户端首次激活时，至少应保存两份关键数据：
 
-### 核心参数定义
+- `license_file`
+- `public_key`
 
-| 参数名 | 枚举值/类型 | 描述与开发建议 |
-| :--- | :--- | :--- |
-| **`status`** | `normal` (正常)<br>`locked` (锁定)<br>`expired` (过期) | 当前授权的状态。<br>**开发建议**：<br>• **normal**: 允许软件正常运行。<br>• **locked**: 授权被管理员强制禁用或检测到违规，应立即阻止运行。<br>• **expired**: 授权已过有效期，应阻止运行或降级为受限模式。 |
-| **`deployment_type`** | `standalone` (单机版)<br>`cloud` (云端版)<br>`hybrid` (混合版) | 部署模式，决定了验证逻辑：<br>• **standalone**: 仅进行本地硬件指纹比对。<br>• **cloud**: 需联网向授权服务器心跳验证。<br>• **hybrid**: 优先联网，断网时允许短时间本地离线验证。 |
-| **`start_date`**<br>**`end_date`** | ISO 8601 时间戳 | 授权的生效与过期时间。<br>**开发建议**：在软件启动时比对当前系统时间。若 `end_date` 小于当前时间，将状态视为过期。 |
-| **`hardware_fingerprint`** | String | 绑定的硬件特征组合（如 MAC, CPU, HostID）取决于客户端的实现。<br>**关键步骤**：客户端需重新计算本地硬件指纹，并与此字段比对。若不一致，说明许可证被非法复制。 |
-| **`usage_limits`** | Object | 使用量限制（如 API 调用次数，用户数量限制等）。 |
-| **`feature_config`** | Object | 功能特性开关（Key-Value）。<br>用于控制软件内特定模块（如 Pro版/基础版）的启用或禁用。 |
-| **`license_key`** | String | 设备的唯一授权标识符。<br>用于日志记录或作为与后端通讯的凭证。 |
+如果系统启用了运行期管理，客户端还需要继续保存：
 
------
+- `license_key`
+- `heartbeat_interval`
 
-## 4. 解码示例
+## 关于公钥与许可证的关系
 
-以下示例展示了解码后的标准许可证对象，便于对字段含义与格式建立直观印象：
+您提醒的这一点很关键，必须单独说明。
+
+当前实现不是“客户端先固定下载一个全局公钥，再用它验证所有许可证”，而是**激活接口会返回用于当前许可证验签的公钥**。
+
+结合代码可以明确两件事：
+
+- 激活响应里明确包含 `public_key`
+- 许可证模型中存在 `RSAPrivateKey` 和 `RSAPublicKey` 字段，说明系统支持**许可证级密钥对**
+
+因此从客户端接入角度，正确理解应该是：
+
+- **一个许可证会对应自己的验签公钥**
+- 客户端应将该公钥与当前许可证一起保存
+- 后续校验该许可证时，应优先使用这次激活返回的 `public_key`
+
+这比“所有许可证共享同一把公钥”的模型更准确，也更符合当前实现。
+
+## `license_file` 的顶层结构
+
+`license_file` 本身是一个 **Base64 编码的 JSON 对象**。客户端通常需要先做 Base64 解码，再解析 JSON，并对其中的 `data` 和 `signature` 执行验签。
+
+顶层结构如下：
+
+| 字段名 | 类型 | 说明 |
+|---|---|---|
+| `algorithm` | String | 当前许可证签名算法，例如 `RSA-PSS-SHA256` |
+| `data` | String | 核心授权载荷，是一个被序列化后的 JSON 字符串 |
+| `signature` | String | 针对 `data` 生成的签名，客户端需要配合激活接口返回的 `public_key` 验证 |
+
+## `data` Payload 说明
+
+解析 `data` 字段后，客户端可以拿到实际授权信息。当前文档中最重要的是下面这些字段：
+
+| 参数名 | 类型/枚举 | 说明 |
+|---|---|---|
+| `status` | `normal` / `locked` / `expired` | 当前授权状态 |
+| `deployment_type` | `standalone` / `cloud` / `hybrid` | 部署模式，决定客户端校验和运行期行为 |
+| `start_date` / `end_date` | ISO 8601 时间戳 | 许可证有效期 |
+| `hardware_fingerprint` | String | 当前许可证绑定的硬件指纹 |
+| `feature_config` | Object | 功能开关配置 |
+| `usage_limits` | Object | 使用量限制 |
+| `license_key` | String | 许可证唯一标识 |
+
+### 关于 `deployment_type`
+
+| 模式 | 客户端关注点 |
+|---|---|
+| `standalone` | 本地验签 + 本地时间校验 + 本地硬件指纹校验 |
+| `cloud` | 本地验签与放行，同时配合服务端心跳完成状态同步、续费和运行期控制 |
+| `hybrid` | 正常情况下走在线同步；网络异常时，允许客户端继续依赖本地许可证运行一段时间 |
+
+这里特别强调：**即使是 `cloud` 模式，客户端核心放行逻辑仍然是基于本地许可证完成的，不是每次启动都实时联网鉴权。**
+
+## 解码示意
+
+下面是解码后的许可证对象示意，用来帮助理解结构。它是结构示意，不代表完整字段集合：
 
 ```json
 {
   "algorithm": "RSA-PSS-SHA256",
-  "data": "{\"activated_at\":\"2025-11-01T22:30:02...\",\"status\":\"normal\",\"deployment_type\":\"standalone\",\"hardware_fingerprint\":\"MAC:5e:a3...\",\"end_date\":\"3025-03-03T23:59:59+08:00\", ...}",
-  "signature": "MQDlxx/crzncJfw2Y00X5spzN1bPWKuU4IDxB48Mwy1WMhOoYUDCcrYjiMgNJHsXzUSD14MURqCBKBMgQAc7EOiUUcwfJ1mhSGvbFYnrSGFxjpbEHUg6dJlgSB4jSxwh4jtHSOb82SvPkHrNE0/p/HKN2Vr3Dj2qU0JB7hM2Jd0vb3Tk7WiFWd9as3vvAChhzoXqHo53vtY7ZyUb56VM/M4UMwJ4w4S7M3DZiPwAAobOn1MfOmOnchXzc+lkhC9c67xprmOi33ms775Dc0tNurv+rCLTQN8wgnt5dfhmdyMbsIk2c188IK/7uca2Pi3qaBKSIkVkSKN78pI2A6gMYIA=="
+  "data": "{\"status\":\"normal\",\"deployment_type\":\"cloud\",\"hardware_fingerprint\":\"MAC:5e:a3...\",\"start_date\":\"2026-06-01T00:00:00+08:00\",\"end_date\":\"2027-06-01T00:00:00+08:00\",\"license_key\":\"LIC-DEVICE-XXXX\"}",
+  "signature": "BASE64_SIGNATURE"
 }
 ```
 
-> **注意：** `data` 字段在传输过程中是**字符串格式**。验证签名时必须使用原始的 `data` 字符串，只有在读取配置时才将其反序列化为 JSON 对象。
+> **注意**：验签时应使用原始 `data` 字符串，而不是先反序列化后再重新编码。否则很容易因为序列化细节差异导致验签失败。
 
------
+## 客户端验证顺序
 
-## 5. 客户端验证清单
+建议客户端按下面顺序处理：
 
-为了保证软件的安全性和授权的有效性，建议客户端按照以下步骤执行校验：
+1. 调用激活接口，获取 `license_file`、`public_key`、`license_key` 和 `heartbeat_interval`
+2. 将 `license_file` 和 `public_key` 持久化保存
+3. 对 `license_file` 做 Base64 解码
+4. 解析顶层 JSON，取出 `algorithm`、`data` 和 `signature`
+5. 使用激活接口返回的 `public_key` 验证 `signature`
+6. 验签通过后，再将 `data` 反序列化为对象
+7. 检查 `status`、`start_date`、`end_date`
+8. 检查 `deployment_type`
+9. 如果需要设备绑定，再比对 `hardware_fingerprint`
+10. 校验通过后允许运行，并按 `heartbeat_interval` 启动心跳
 
-1.  **解码 (Decode):** 将许可证字符串进行 Base64 解码。
-2.  **验签 (Verify Signature):** 使用内置的**公钥 (Public Key)**，对 `data` 字符串和 `signature` 进行 RSA 校验。
-      * *若验签失败，说明许可证被篡改，应立即终止程序。*
-3.  **解析 (Parse):** 将 `data` 字符串反序列化为对象。
-4.  **状态检查 (Check Status):**
-      * 确认 `status` 等于 `"normal"`。
-      * 确认当前时间在 `start_date` 和 `end_date` 之间。
-5.  **环境指纹比对 (Fingerprint Match):**
-      * 根据 `deployment_type` 执行相应的硬件或网络校验。
-      * (单机版) 重新计算本地硬件信息并与 `data` 中的 `hardware_fingerprint` 进行比对。
+## 运行期更新
 
-> 可以将上述 5 步实现为模块化的校验管线，以便后续扩展（例如增加联网授权、租户隔离等策略）。
+对于在线或混合模式，客户端后续通常还会通过心跳接口继续与服务端同步。
 
+运行期需要关注：
+
+- 授权状态是否变更
+- 配置是否更新
+- 服务端是否返回新的 `license_file`
+- 客户端是否需要更新本地许可证
+
+也就是说，激活接口负责“首次拿到许可证和公钥”，而心跳接口负责“后续同步许可证变化”。
+
+## 对接建议
+
+如果您在实现客户端 SDK 或产品接入，建议遵循以下原则：
+
+- 不要假设所有许可证共用一把固定公钥
+- 优先使用激活接口返回的 `public_key` 验证当前许可证
+- 将 `license_file` 与 `public_key` 配对存储，避免错配
+- 将本地验签与业务状态校验拆开，便于排查问题
+- 心跳更新到新许可证后，确认是否也要同步更新对应公钥
+
+## 相关文档
+
+- [介绍](./index.md)
+- [操作指南](./operating_guide.md)
+- [客户端 SDK](./sdk.md)
+- [客户端授权测试工具](./client-simulator.md)
+- [接口文档](./api.md)

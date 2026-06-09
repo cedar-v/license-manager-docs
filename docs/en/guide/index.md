@@ -1,129 +1,143 @@
 # Introduction
 
-License Manager is an independent software licensing management system that provides license code generation, distribution, validation, and management services for software systems. The system supports both enterprise-level management backend and user-end self-service, supporting both online and offline licensing modes, with hardware-based binding mechanisms ensuring security.
+License Manager is a software licensing management system for software vendors, implementation teams, and independent developers. It helps manage the key steps in the licensing lifecycle, including **license code generation, license delivery, client-side validation, renewal updates, and runtime control**.
 
-## System Overview
+For many software teams, the hard part is not just "how to validate a license once." The real challenge is turning **license distribution, activation, device binding, renewal, offline delivery, and runtime management** into a stable delivery workflow. License Manager is built to centralize these capabilities so teams do not have to rebuild them in every project.
 
-License Manager is an enterprise-grade software licensing management solution that provides dual-end service modes:
+## What Problems Does It Solve?
 
-- **Enterprise End**: Helps software vendors achieve a complete lifecycle management cycle from license generation, distribution, validation to full lifecycle management
-- **User End**: Provides end users with convenient self-service for purchasing, activating, and managing licenses, supporting mobile phone registration, online payment, device binding and other functions
+If your software needs to control who can use it, how long it can be used, how many devices can be activated, or which features are available, you will usually run into a few common problems:
 
-The system adopts a frontend-backend separation architecture, providing an intuitive management interface and rich API interfaces, supporting multiple deployment modes to meet licensing management needs in different scenarios.
+- Licensing rules are scattered across client code, making later changes costly
+- The software is already delivered, but there is no consistent process for issuing codes, activation, and renewal
+- Customer environments are mixed, with both online and fully offline deployment scenarios
+- You need to limit device count or bind licenses to specific machines
+- You need to change license status or validity without shipping a new version of the software
 
-## Core Features
+License Manager is designed to provide a practical way to handle exactly these issues.
 
-### 🔐 Flexible Licensing Modes
+## Core Capabilities
 
-- **Online Licensing (Cloud)**: Local verification + heartbeat reporting, with remote control and management
-- **Offline Licensing (Standalone)**: Hardware fingerprint binding, verification without network connection
-- **Hybrid Mode**: Local verification + heartbeat reporting, allow short-term offline operation when disconnected
+### License Codes and License Files
 
-### 🛡️ Security Mechanisms
+The system supports creating license codes around your product and generating or distributing license files based on licensing policies.
 
-- **Hardware Binding**: Prevent license copying through device fingerprints (MAC, CPU, HostID, etc.)
-- **Digital Signatures**: RSA-PSS-SHA256 signatures ensure license data integrity
-- **State Management**: Support multiple states including normal, locked, expired, with remote control capabilities
-- **Key Encryption**: Encrypted storage and transmission of license data
+- Define policies for validity period, activation count, feature scope, and more
+- Batch-create license codes for bulk delivery or unified import workflows
+- Generate license files from device information for formal software delivery
+- Adjust license status, such as normal, locked, or expired
 
-### 📊 Full Lifecycle Management
+### Online, Offline, and Hybrid Deployment
 
-- **Customer Management**: Unified maintenance of customer profiles, contacts, and license relationships
-- **License Generation**: Batch generation, custom validity periods, feature restriction configuration
-- **Status Monitoring**: Real-time license status viewing, usage statistics
-- **Operation Auditing**: Complete operation log records for traceability and auditing
+The system supports multiple deployment modes so it can fit real customer environments.
 
-### 👤 User Self-Service
+- **Online mode (Cloud)**: local client validation plus server heartbeat, suitable for remote renewal, status sync, and runtime control
+- **Offline mode (Standalone)**: device-bound license files with local validation, suitable for intranet, industrial, or isolated environments
+- **Hybrid mode (Hybrid)**: prioritizes the online path while retaining limited offline availability, balancing control and usability
 
-- **Self-Service Purchase**: Users register and log in via mobile phone, select packages and device quantities, pay via Alipay
-- **One-Click Activation**: After obtaining license code, open the software product and enter the license code, system automatically binds device and activates
-- **Order Management**: Support viewing order history, applying for invoices and other services
-- **Device Management**: Support viewing bound devices, unbinding unnecessary devices
-- **Auto Renewal**: Support heartbeat monitoring and automatic renewal reminders
+### Client-Side Local Validation
 
-### 🚀 Easy Integration
+At runtime, the client does not rely on real-time online verification every time. Instead, the core validation happens locally based on the license file.
 
-- **RESTful API**: Standardized API interfaces, easy to integrate with existing systems
-- **Client SDK**: Client verification libraries in multiple languages
-- **Deployment Package Generation**: Automatically generate deployment packages with configuration, simplifying delivery processes
+- License data is protected by signatures, and the client can verify it with a public key
+- Hardware fingerprints can be used for device binding
+- The client can evaluate status, validity, feature configuration, and usage limits from the license content
+- Even in online scenarios, the final allow/deny decision can still happen locally
 
-## System Architecture
+### Runtime Control and Renewal Updates
 
-The system adopts a modern **frontend-backend separation architecture** design, with the backend built on the high-performance **Go (Golang)** language. This architecture design ensures system stability under high-concurrency scenarios while greatly simplifying enterprise deployment and operational costs.
+For online or hybrid deployments, the system can continue managing license status after the software has been delivered and activated.
 
-### Core Components
+- Clients can report periodic heartbeats
+- The server can decide whether a license update is required
+- After renewal, expansion, or status changes, the client can automatically download an updated license and refresh its local state
+- This makes ongoing management easier for support, operations, and implementation teams
+
+### SDK and Integration
+
+License Manager provides client SDKs to help developers integrate licensing much faster.
+
+The SDK already covers a common set of building blocks, including:
+
+- Public key download
+- License file download
+- License parsing and signature verification
+- Activation flow handling
+- Device binding and basic license checks
+
+This means development teams do not need to repeatedly implement license parsing, signature validation, and activation logic in every client project.
+
+## Typical Scenarios
+
+### Enterprise Software Delivery
+
+When delivering desktop software, server-side programs, or industry-specific systems to enterprise customers, you often need to control licensing by customer, device count, validity period, or feature module. In these cases, License Manager can centralize code generation, license delivery, and later renewals.
+
+### Offline Environment Licensing
+
+If the software runs in intranets, industrial sites, production environments, or other scenarios without internet access, you can use offline mode: collect the device fingerprint first, generate a machine-bound license file, and let the client validate it locally.
+
+### Online Trial and Paid Renewal
+
+If you want to offer a trial first and then convert users to a paid license later, online or hybrid mode is a practical option. After the first activation, the client can continue to receive renewal or license updates through heartbeat-based communication, without requiring manual re-issuance every time.
+
+### Selling Software as an Independent Developer
+
+For products such as plugins, desktop utilities, and lightweight industry tools, the software itself can be distributed through communities, content platforms, or card-selling platforms. License Manager handles the licensing, activation, and validation steps behind the scenes, making the sales workflow easier to maintain over time.
+
+## A Simplified Workflow
+
+The diagram below shows the most common workflow in the system:
 
 ```mermaid
-graph TD
-    UI[💻 Frontend Admin Interface<br/>Vue.js 3 + Modern UI]
-    API[⚙️ Backend Core Engine<br/>Go + Gin + GORM]
-    DB[(🗄️ MySQL Database<br/>License Data Storage)]
-
-    UI -->|HTTPS / REST API| API
-    API -->|TCP / SQL| DB
-    
-    %% Simple styling
-    classDef default fill:#fff,stroke:#333,stroke-width:2px;
+flowchart TD
+    A[Create licensing policy] --> B[Generate license code]
+    B --> C[Client enters license code to activate]
+    C --> D[Download or generate license file]
+    D --> E[Client performs local validation]
+    E --> F{Online or hybrid mode?}
+    F -->|Yes| G[Send periodic heartbeat]
+    G --> H[Renewal or status update]
+    H --> I[Auto-update local license]
+    F -->|No| J[Run locally offline]
 ```
 
-### Architecture Advantages
+In this workflow:
 
-* **Ultimate Performance**: Thanks to Go's coroutine (Goroutine) features, a single node can support tens of thousands of concurrent verification requests with extremely low resource consumption.
-* **Simple Deployment**: The backend compiles into a single binary file (Single Binary) with zero runtime dependencies, perfectly supporting Docker containerized deployment.
-* **Secure and Reliable**: API interface layer adopts strict authentication mechanisms, core business logic is closed-loop on the server side, and the database supports transactional consistency guarantees.
-* **Easy to Scale**: Modular code structure design supports smooth upgrade from single-machine mode to cluster high-availability mode.
+1. The admin side defines the licensing policy
+2. The client completes first-time activation with a license code
+3. The system delivers or generates a license file based on deployment mode
+4. The client validates the license locally
+5. In online or hybrid mode, later renewals and status sync happen through heartbeat updates
 
-### Workflow
+## Who Is It For?
 
-```mermaid
-sequenceDiagram
-    autonumber
-    participant Admin as 👤 Administrator
-    participant System as ⚙️ Core Engine
-    participant Client as 🖥️ Client Software
+This system is a good fit for the following kinds of teams and products:
 
-    Note over Admin, System: Phase 1: Generation & Distribution
-    Admin->>System: 1. Create License Policy (Web UI)
-    System-->>Admin: Generate License File/Key
-    Admin->>Client: 2. Distribute License Package (Email/Download)
+- Software teams that need commercial licensing
+- Desktop clients or edge software that need device activation limits
+- Industry software, industrial software, or embedded companion software that must support offline delivery
+- Product teams that need unified management for trials, paid licenses, renewals, and status updates
+- Development teams that want to integrate licensing quickly instead of building a full license system from scratch
 
-    Note over Client, System: Phase 2: Verification & Operation
-    Client->>Client: 3. Local Verification (Decrypt & Verify Signature)
-    
-    opt Online Mode
-        Client->>System: 4. Report Heartbeat (with License Info)
-        System->>System: Check Heartbeat Content
-        alt License Update Required
-            System-->>Client: Return true (Update Required)
-            Client->>System: 5. Auto-download New License
-            System-->>Client: Return New License File
-            Client->>Client: Update Local License
-        else No Update Needed
-            System-->>Client: Return false (Normal)
-        end
-    end
-```
+## Recommended Reading Order
 
-1.  **License Issuance**: Administrators configure policies through the frontend interface, and the backend core engine generates tamper-proof license files/keys using encryption algorithms.
-2.  **License Distribution**: Supports online automatic distribution or export of offline deployment packages, delivered to end users through secure channels.
-3.  **Client-Side Verification**: Client applications integrate SDKs and perform **local verification** (using public key to decrypt and verify signatures) at startup or runtime. Whether in online or offline mode, verification is completed locally without requiring real-time network connection.
-4.  **Heartbeat Reporting & License Update**: In online mode, clients periodically report heartbeats (containing license information) to the server. The server checks the heartbeat content to determine if a license update is needed. If an update is required, it returns `true` to the client, and the client automatically downloads the new license and updates the local license file.
-5.  **Audit and Monitoring**: The system automatically records verification logs and heartbeat data, providing real-time feedback on license usage status and anomaly alerts.
+If this is your first time using License Manager, we recommend reading in this order:
 
-## Use Cases
+1. Start with [Getting Started](./getting-started.md) to learn how to deploy the system
+2. Then read [Operating Guide](./operating_guide.md) to understand licensing, distribution, activation, and renewal workflows
+3. If you need client integration, continue with [Client SDK](./sdk.md) and [License Structure & Validation](./license-token-structure.md)
+4. If you want to experience the client workflow first, check [Client Authorization Test Tool](./client-simulator.md)
+5. If you need system integration, see [API Reference](./api.md)
 
-- **SaaS Software**: Need to control access permissions by time, features, user count, etc.
-- **Enterprise Software**: Require hardware binding to prevent illegal license copying
-- **Embedded Systems**: Require offline verification without network dependency
-- **API Services**: Need to control usage limits such as call counts, concurrency, etc.
-- **Software Trials**: Provide trial period licenses with automatic feature restrictions upon expiration
-- **Individual User Software**: Support user self-service purchase, online payment, device binding activation
-- **Multi-Device Management**: Support single user using on multiple devices, support device unbinding and reallocation
+## Related Documents
 
-
-## Next Steps
-
-- If you are a **new user**, we recommend starting with [Getting Started](./getting-started.md) to learn how to deploy the system
-- If you want to understand **why you need a licensing system**, check out [Business Value](./business_value.md)
-- If you are a **developer** needing to integrate license validation, please refer to [License Structure](./license-token-structure.md) and [API Reference](./api.md)
-- If you want to **contribute** or understand our development philosophy, see [Community Strategy](./community_strategy.md)
+- [Getting Started](./getting-started.md)
+- [Operating Guide](./operating_guide.md)
+- [Client SDK](./sdk.md)
+- [License Structure & Validation](./license-token-structure.md)
+- [Client Authorization Test Tool](./client-simulator.md)
+- [API Reference](./api.md)
+- [Why You Need a License Management System](./why/why-you-need-license-management.md)
+- [Flexible Licensing for Machine Vision Inspection Software](./cases/machine-vision-licensing.md)
+- [Instant Monetization for Independent Developers](./cases/indie-developer-monetization.md)
