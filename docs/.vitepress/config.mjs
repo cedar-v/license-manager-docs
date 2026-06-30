@@ -124,7 +124,8 @@ export default withMermaid(
             { text: '首页', link: '/' },
             { text: '指南', link: '/guide/' },
             { text: '战略洞察', link: '/guide/why/software-asset-strategic-value.md' },
-            { text: '客户案例', link: '/guide/cases/machine-vision-licensing' }
+            { text: '客户案例', link: '/guide/cases/machine-vision-licensing' },
+            { text: '政策与规范', link: '/policies/' }
           ],
           sidebar: {
             '/guide/': [
@@ -154,6 +155,17 @@ export default withMermaid(
                 items: [
                   { text: '机器视觉检测软件的灵活授权方案', link: '/guide/cases/machine-vision-licensing' },
                   { text: '独立开发者的即时变现之路', link: '/guide/cases/indie-developer-monetization' }
+                ]
+              }
+            ],
+            '/policies/': [
+              {
+                text: '政策与规范',
+                items: [
+                  { text: '政策与规范', link: '/policies/' },
+                  { text: '雪松授权云服务协议', link: '/policies/service-agreement' },
+                  { text: '雪松授权云隐私声明', link: '/policies/privacy-statement' },
+                  { text: '雪松授权云账号协议', link: '/policies/account-agreement' }
                 ]
               }
             ]

@@ -69,6 +69,35 @@
     <priority>0.6</priority>
   </url>
 
+  <!-- 政策与规范 -->
+  <url>
+    <loc>https://docs.lm.cedar-v.com/policies/</loc>
+    <lastmod>2026-07-01</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
+  <url>
+    <loc>https://docs.lm.cedar-v.com/policies/service-agreement</loc>
+    <lastmod>2026-07-01</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
+  <url>
+    <loc>https://docs.lm.cedar-v.com/policies/privacy-statement</loc>
+    <lastmod>2026-07-01</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
+  <url>
+    <loc>https://docs.lm.cedar-v.com/policies/account-agreement</loc>
+    <lastmod>2026-07-01</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
   <!-- 英文文档页面 -->
   <url>
     <loc>https://docs.lm.cedar-v.com/en/</loc>

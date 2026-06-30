@@ -23,6 +23,7 @@ Allow: /
 Allow: /guide/
 Allow: /en/
 Allow: /docs-blog/
+Allow: /policies/
 
 # 阻止索引一些不重要的路径
 Disallow: /node_modules/
