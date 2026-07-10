@@ -123,11 +123,43 @@ export default withMermaid(
           nav: [
             { text: '首页', link: '/' },
             { text: '指南', link: '/guide/' },
+            { text: '开发者中心', link: '/developer/' },
             { text: '战略洞察', link: '/guide/why/software-asset-strategic-value.md' },
             { text: '客户案例', link: '/guide/cases/machine-vision-licensing' },
             { text: '政策与规范', link: '/policies/' }
           ],
           sidebar: {
+            '/developer/': [
+              {
+                text: '开发者中心',
+                items: [
+                  { text: '概览', link: '/developer/' },
+                  { text: 'AI 快速接入', link: '/developer/ai-quickstart' },
+                  { text: '原生 API 灵活对接', link: '/developer/quickstart' },
+                  { text: '在线激活', link: '/developer/activation-online' },
+                  { text: '离线激活', link: '/developer/activation-offline' },
+                  { text: '本地许可证校验', link: '/developer/license-validation' },
+                  { text: '硬件指纹策略', link: '/developer/hardware-fingerprint' }
+                ]
+              },
+              {
+                text: 'SDK 接入',
+                items: [
+                  { text: 'SDK 总览', link: '/developer/sdk/' },
+                  { text: 'C# SDK 接入', link: '/developer/sdk/csharp' }
+                ]
+              },
+              {
+                text: 'API 与排障',
+                items: [
+                  { text: 'API 总览', link: '/developer/api/' },
+                  { text: '激活接口', link: '/developer/api/activation' },
+                  { text: '错误码', link: '/developer/api/errors' },
+                  { text: '常见问题排查', link: '/developer/troubleshooting' },
+                  { text: '生产上线检查清单', link: '/developer/production-checklist' }
+                ]
+              }
+            ],
             '/guide/': [
               {
                 text: '指南',

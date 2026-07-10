@@ -15,7 +15,7 @@
 - **硬件指纹（Hardware Fingerprint）**：设备标识信息，用于离线授权或设备绑定校验
 - **心跳（Heartbeat）**：在线或混合模式下，客户端定期上报的运行状态，用于续期、状态同步和运行期控制
 
-如果您需要了解许可证的结构和客户端校验逻辑，请继续阅读 [许可证结构与验证（客户端要点）](./license-token-structure.md)。
+如果您需要了解客户端接入路径，请从 [开发者中心](/developer/) 开始；如果只需要了解许可证结构和客户端校验逻辑，请继续阅读 [许可证结构与验证（客户端要点）](./license-token-structure.md)。
 
 ## 先判断使用哪种模式
 
@@ -181,6 +181,8 @@ flowchart TD
 
 - [客户端 SDK](./sdk.md)
 - [许可证结构与验证（客户端要点）](./license-token-structure.md)
+- [开发者中心](/developer/)
+- [在线激活](/developer/activation-online.md)
 
 ## 第五步：处理续费、扩容和状态变更
 
@@ -298,6 +300,7 @@ flowchart TD
 ## 相关文档
 
 - [介绍](./index.md)
+- [开发者中心](/developer/)
 - [客户端 SDK](./sdk.md)
 - [许可证结构与验证（客户端要点）](./license-token-structure.md)
 - [客户端授权测试工具](./client-simulator.md)

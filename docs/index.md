@@ -16,11 +16,11 @@ hero:
       text: 功能介绍
       link: /guide/features
     - theme: alt
-      text: 在线演示
-      link: http://lm.cedar-v.com
+      text: 开发者中心
+      link: /developer/
     - theme: alt
-      text: 查看源码
-      link: https://github.com/cedar-v/license-manager
+      text: 在线演示
+      link: https://lic.cedar-v.com/
 ---
 
 ## License Manager 是什么
@@ -244,13 +244,13 @@ hero:
     </div>
   </a>
 
-  <a href="/guide/sdk" class="quick-start-link">
+  <a href="/developer/" class="quick-start-link">
     <div class="quick-start-icon">
       <iconify-icon icon="solar:code-bold-duotone" width="32" height="32"></iconify-icon>
     </div>
     <div class="quick-start-content">
-      <h4>客户端 SDK</h4>
-      <p>查看授权接入与客户端开发说明</p>
+      <h4>开发者中心</h4>
+      <p>按接入路径查看在线激活、离线激活、SDK 与排障说明</p>
     </div>
   </a>
 
@@ -264,7 +264,7 @@ hero:
     </div>
   </a>
 
-  <a href="http://lm.cedar-v.com" class="quick-start-link">
+  <a href="https://lic.cedar-v.com/" class="quick-start-link">
     <div class="quick-start-icon">
       <iconify-icon icon="solar:play-circle-bold-duotone" width="32" height="32"></iconify-icon>
     </div>
@@ -275,20 +275,20 @@ hero:
   </a>
 </div>
 
-## 社区与支持
+## 咨询与支持
 
 <div class="community-support-section">
   <div class="community-grid">
     <div class="community-card">
       <div class="community-content">
         <div class="community-text">
-          <h3>开源社区</h3>
-          <p>欢迎加入我们的开源社区，与开发者交流授权接入、商业化设计与部署实践。</p>
-          <p>扫描下方二维码，加入社区群讨论 License Manager 相关话题。</p>
+          <h3>产品交流</h3>
+          <p>欢迎与我们交流授权接入、商业化设计与部署实践。</p>
+          <p>扫描下方二维码，获取产品资料、接入建议与方案咨询。</p>
         </div>
         <div class="community-qrcode">
-          <img src="/images/qrcode_1755081220153.jpg" alt="开源社区群二维码" width="150" height="150">
-          <p class="qrcode-label">开源社区群</p>
+          <img src="/images/qrcode_1755081220153.jpg" alt="产品交流二维码" width="150" height="150">
+          <p class="qrcode-label">产品交流</p>
         </div>
       </div>
     </div>

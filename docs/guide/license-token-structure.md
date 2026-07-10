@@ -159,6 +159,9 @@ flowchart TD
 
 - [介绍](./index.md)
 - [操作指南](./operating_guide.md)
+- [开发者中心](/developer/)
+- [本地许可证校验](/developer/license-validation.md)
+- [在线激活](/developer/activation-online.md)
 - [客户端 SDK](./sdk.md)
 - [客户端授权测试工具](./client-simulator.md)
 - [接口文档](./api.md)
