@@ -134,7 +134,8 @@ export default withMermaid(
                 text: '开发者中心',
                 items: [
                   { text: '概览', link: '/developer/' },
-                  { text: 'AI 快速接入', link: '/developer/ai-quickstart' },
+                  { text: '业务接入方式指导', link: '/developer/business-guidance' },
+                  { text: 'AI 原生 API 快速接入（推荐）', link: '/developer/ai-quickstart' },
                   { text: '原生 API 灵活对接', link: '/developer/quickstart' },
                   { text: '在线激活', link: '/developer/activation-online' },
                   { text: '离线激活', link: '/developer/activation-offline' },
