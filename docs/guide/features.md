@@ -117,7 +117,7 @@ License Manager 提供了公开的客户端 API，客户端软件通过这些接
 - **心跳接口（Heartbeat）**：客户端定期上报状态，服务端判断是否需要更新许可证或执行远程控制指令
 - **指纹查证接口（License by Fingerprint）**：根据设备指纹查询当前许可证信息
 
-这些接口不依赖管理后台的登录态，客户端 SDK 可以帮助开发团队快速接入。
+这些接口不依赖管理后台的登录态。新项目推荐通过 [AI 原生 API 快速接入（推荐）](/developer/ai-quickstart.md)，SDK 仅作为可选封装。
 
 ### 授权策略
 
@@ -291,13 +291,13 @@ License Manager 基于 Casbin 实现 RBAC 权限模型：
 
 ## 公开客户端接口
 
-以下接口无需管理后台登录态，客户端 SDK 或直接调用均可使用：
+以下接口无需管理后台登录态。推荐让 AI 按原生 API 协议完成接入，也可以按需选择 SDK：
 
 | 接口 | 用途 |
 | --- | --- |
 | `POST /api/v1/activate` | 客户端激活：输入授权码，返回加密许可证 |
 | `POST /api/v1/heartbeat` | 心跳上报：定期向服务端同步状态并获取更新指令 |
-| `GET /api/v1/license-by-fingerprint` | 根据硬件指纹查询当前许可证信息 |
+| `POST /api/v1/license-by-fingerprint` | 根据硬件指纹查询当前许可证信息 |
 | `GET /api/public/config` | 获取公开配置（如平台名称、Logo），登录页使用 |
 | `POST /api/cu/packages` | 用户端获取在售套餐列表 |
 | `POST /api/leads` | 提交企业线索，无需登录 |
@@ -309,8 +309,9 @@ License Manager 基于 Casbin 实现 RBAC 权限模型：
 如果您希望继续了解具体接入和落地方式，建议按下面顺序阅读：
 
 1. [快速开始](./getting-started.md)
-2. [操作指南](./operating_guide.md)
-3. [许可证结构与验证（客户端要点）](./license-token-structure.md)
-4. [客户端 SDK](./sdk.md)
-5. [客户端授权测试工具](./client-simulator.md)
-6. [接口文档](./api.md)
+2. [AI 原生 API 快速接入（推荐）](/developer/ai-quickstart.md)
+3. [操作指南](./operating_guide.md)
+4. [许可证结构与验证（客户端要点）](./license-token-structure.md)
+5. [接口文档](./api.md)
+6. [客户端授权测试工具](./client-simulator.md)
+7. [客户端 SDK（可选）](./sdk.md)

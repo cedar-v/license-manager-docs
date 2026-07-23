@@ -168,11 +168,12 @@ export default withMermaid(
                   { text: '介绍', link: '/guide/' },
                   { text: '功能介绍', link: '/guide/features' },
                   { text: '快速开始', link: '/guide/getting-started' },
+                  { text: 'AI 原生 API 快速接入（推荐）', link: '/developer/ai-quickstart' },
                   { text: '操作指南', link: '/guide/operating_guide' },
                   { text: '许可证结构与验证（客户端要点）', link: '/guide/license-token-structure' },
-                  { text: '客户端 SDK', link: '/guide/sdk' },
-                  { text: '客户端授权测试工具', link: '/guide/client-simulator' },
                   { text: '接口文档', link: '/guide/api' },
+                  { text: '客户端授权测试工具', link: '/guide/client-simulator' },
+                  { text: '客户端 SDK（可选）', link: '/guide/sdk' },
                   { text: '社区发展策略', link: '/guide/community_strategy' }
                 ]
               },

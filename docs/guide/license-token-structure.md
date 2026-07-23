@@ -85,7 +85,7 @@ flowchart TD
 
 | 参数名 | 类型/枚举 | 说明 |
 |---|---|---|
-| `status` | `normal` / `locked` / `expired` | 当前授权状态 |
+| `status` | `active` / `revoked` | 当前许可证状态；到期还需结合 `end_date` 判断 |
 | `deployment_type` | `standalone` / `cloud` / `hybrid` | 部署模式，决定客户端校验和运行期行为 |
 | `start_date` / `end_date` | ISO 8601 时间戳 | 许可证有效期 |
 | `hardware_fingerprint` | String | 当前许可证绑定的硬件指纹 |
@@ -110,7 +110,7 @@ flowchart TD
 ```json
 {
   "algorithm": "RSA-PSS-SHA256",
-  "data": "{\"status\":\"normal\",\"deployment_type\":\"cloud\",\"hardware_fingerprint\":\"MAC:5e:a3...\",\"start_date\":\"2026-06-01T00:00:00+08:00\",\"end_date\":\"2027-06-01T00:00:00+08:00\",\"license_key\":\"LIC-DEVICE-XXXX\"}",
+  "data": "{\"status\":\"active\",\"deployment_type\":\"cloud\",\"hardware_fingerprint\":\"MAC:5e:a3...\",\"start_date\":\"2026-06-01T00:00:00+08:00\",\"end_date\":\"2027-06-01T00:00:00+08:00\",\"license_key\":\"LIC-DEVICE-XXXX\"}",
   "signature": "BASE64_SIGNATURE"
 }
 ```
@@ -127,7 +127,7 @@ flowchart TD
 4. 解析顶层 JSON，取出 `algorithm`、`data` 和 `signature`
 5. 使用激活接口返回的 `public_key` 验证 `signature`
 6. 验签通过后，再将 `data` 反序列化为对象
-7. 检查 `status`、`start_date`、`end_date`
+7. 检查 `status` 是否为 `active`，并校验 `start_date`、`end_date`
 8. 检查 `deployment_type`
 9. 如果需要设备绑定，再比对 `hardware_fingerprint`
 10. 校验通过后允许运行，并按 `heartbeat_interval` 启动心跳
@@ -147,7 +147,7 @@ flowchart TD
 
 ## 对接建议
 
-如果您在实现客户端 SDK 或产品接入，建议遵循以下原则：
+如果您在实现客户端产品接入，建议遵循以下原则：
 
 - 不要假设所有许可证共用一把固定公钥
 - 优先使用激活接口返回的 `public_key` 验证当前许可证
@@ -159,9 +159,10 @@ flowchart TD
 
 - [介绍](./index.md)
 - [操作指南](./operating_guide.md)
+- [AI 原生 API 快速接入（推荐）](/developer/ai-quickstart.md)
 - [开发者中心](/developer/)
 - [本地许可证校验](/developer/license-validation.md)
 - [在线激活](/developer/activation-online.md)
-- [客户端 SDK](./sdk.md)
 - [客户端授权测试工具](./client-simulator.md)
 - [接口文档](./api.md)
+- [客户端 SDK（可选）](./sdk.md)

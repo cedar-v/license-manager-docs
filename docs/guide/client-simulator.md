@@ -2,6 +2,10 @@
 
 为了方便您快速了解和测试 License Manager SDK（特别是基于 Python 的客户端体验），我们提供了一个基于桌面环境的 **客户端授权测试工具 (Client Simulator)** Demo。该工具主要模拟了机器视觉应用软件等客户端的典型鉴权与管控流程。
 
+::: tip 新项目接入
+本页记录的是现有 Python SDK 演示工具。新项目开发请优先使用 [AI 原生 API 快速接入（推荐）](/developer/ai-quickstart.md)，让 AI 在您的对接项目中直接实现原生接口调用。
+:::
+
 您可以在 Python SDK 的 `examples/客户案例1` 目录下找到相关代码与设计文档。
 
 ### ⬇️ 下载体验

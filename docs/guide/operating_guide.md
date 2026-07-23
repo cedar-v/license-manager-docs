@@ -4,7 +4,7 @@
 
 本文面向运营、实施、售后和交付团队，说明如何使用 License Manager 完成**授权创建、授权交付、客户端激活、运行期管理和续费更新**。
 
-如果您已经了解产品定位，可以把这篇文档理解为“日常怎么把授权工作真正跑起来”的操作说明。它不展开 SDK 代码细节，而是聚焦交付流程、部署模式和常见处理动作。
+如果您已经了解产品定位，可以把这篇文档理解为“日常怎么把授权工作真正跑起来”的操作说明。它不展开客户端代码细节，而是聚焦交付流程、部署模式和常见处理动作。
 
 ## 前置理解
 
@@ -179,10 +179,11 @@ flowchart TD
 
 这部分实现细节请参考：
 
-- [客户端 SDK](./sdk.md)
+- [AI 原生 API 快速接入（推荐）](/developer/ai-quickstart.md)
 - [许可证结构与验证（客户端要点）](./license-token-structure.md)
 - [开发者中心](/developer/)
 - [在线激活](/developer/activation-online.md)
+- [客户端 SDK（可选）](./sdk.md)
 
 ## 第五步：处理续费、扩容和状态变更
 
@@ -300,8 +301,9 @@ flowchart TD
 ## 相关文档
 
 - [介绍](./index.md)
+- [AI 原生 API 快速接入（推荐）](/developer/ai-quickstart.md)
 - [开发者中心](/developer/)
-- [客户端 SDK](./sdk.md)
 - [许可证结构与验证（客户端要点）](./license-token-structure.md)
 - [客户端授权测试工具](./client-simulator.md)
 - [接口文档](./api.md)
+- [客户端 SDK（可选）](./sdk.md)
