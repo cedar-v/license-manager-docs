@@ -44,11 +44,16 @@ dotnet pack .\license-manager-dotnet\license-manager-dotnet.csproj -c Release
 
 ## 最小在线接入
 
-在线模式下，首次启动时 SDK 会采集硬件指纹、读取本地许可证；如果本地没有有效许可证，则使用激活码调用雪松授权云平台完成在线激活。激活成功后，SDK 会保存许可证文件和公钥，并启动后台心跳。
+在线模式下，开发者先从产品页面获取产品公钥并配置到 SDK。首次启动时 SDK 会采集硬件指纹、读取本地许可证；如果本地没有有效许可证，则使用激活码调用雪松授权云平台完成在线激活。SDK 使用配置的产品公钥验签、保存许可证文件并启动后台心跳，业务代码无需处理接口响应中的公钥。
 
 ```csharp
 using LicenseManager.DotNet;
 using LicenseManager.DotNet.Configuration;
+using System.Text;
+
+const string ProductPublicKeyPem = @"-----BEGIN PUBLIC KEY-----
+请替换为产品页面获取的完整公钥
+-----END PUBLIC KEY-----";
 
 var config = new LicenseClientConfig
 {
@@ -57,6 +62,7 @@ var config = new LicenseClientConfig
     Version = "1.0.0",
     AuthorizationCode = "LIC-XXXX-XXXX",
     LicenseFilePath = "license_code/license.lic",
+    PublicKeyPem = Encoding.UTF8.GetBytes(ProductPublicKeyPem),
     HardwareFields = new List<string> { "hostname", "cpu" },
     HeartbeatIntervalSeconds = 600
 };
@@ -81,7 +87,7 @@ Console.WriteLine($"到期时间：{license?.ExpiresAt:u}");
 | `Version` | 是 | 当前软件版本，会随激活和心跳上报 |
 | `AuthorizationCode` | 首次在线激活必填 | 激活码，也可以通过 `AuthorizationCodePath` 从文件读取 |
 | `LicenseFilePath` | 否 | 本地许可证文件路径，默认 `license_code/license.lic` |
-| `PublicKeyPath` / `PublicKeyPem` | 离线模式必填 | 离线验签所需公钥；在线激活成功后 SDK 会缓存公钥 |
+| `PublicKeyPath` / `PublicKeyPem` | 正式接入必填 | 从产品页面获取的产品公钥，作为客户端固定验签信任根 |
 | `Offline` | 否 | 是否启用离线模式 |
 | `HardwareFields` | 否 | 硬件指纹字段，推荐默认 `hostname`、`cpu` |
 | `HeartbeatIntervalSeconds` | 否 | 本地默认心跳间隔；服务端心跳响应可覆盖下一轮间隔 |
@@ -101,7 +107,7 @@ flowchart TD
     E -->|是| F["启动后台心跳"]
     E -->|否| G{"是否在线模式且有激活码?"}
     G -->|是| H["调用 /api/v1/activate 在线激活"]
-    H --> I["保存许可证与公钥"]
+    H --> I["使用配置的产品公钥验签并保存许可证"]
     I --> F
     G -->|否| J["抛出异常并提示激活"]
     F --> K["业务读取授权配置并启动"]
@@ -174,11 +180,6 @@ var callbacks = new LicenseCallbacks
         Console.WriteLine("心跳成功");
         return Task.CompletedTask;
     },
-    OnPublicKeyUpdated = publicKey =>
-    {
-        Console.WriteLine("公钥已更新");
-        return Task.CompletedTask;
-    }
 };
 
 using var client = await LicenseClient.CreateAsync(config, new LicenseClientOptions
@@ -195,7 +196,6 @@ using var client = await LicenseClient.CreateAsync(config, new LicenseClientOpti
 | `OnHeartbeatError` | 后台心跳请求异常，或服务端返回非 `000000` |
 | `OnActivationRequired` | 激活失败，或心跳返回 `status == "activation_required"` |
 | `OnHeartbeatPing` | 后台心跳成功返回 |
-| `OnPublicKeyUpdated` | 在线激活返回新公钥并被 SDK 保存 |
 
 ## 错误处理
 
@@ -243,7 +243,7 @@ var config = new LicenseClientConfig
     Version = "1.0.0",
     Offline = true,
     LicenseFilePath = "license_code/license.lic",
-    PublicKeyPath = "license_code/license.pubkey",
+    PublicKeyPem = Encoding.UTF8.GetBytes(ProductPublicKeyPem),
     HardwareFields = new List<string> { "hostname", "cpu" }
 };
 
@@ -251,7 +251,7 @@ using var client = await LicenseClient.CreateAsync(config);
 client.Validate();
 ```
 
-离线模式要求本地已经存在许可证文件和公钥文件。首次接入建议优先使用在线模式完成激活，确认业务流程稳定后再评估是否需要离线交付。
+离线模式要求本地已经存在许可证文件，并通过 `PublicKeyPath` 或 `PublicKeyPem` 配置产品公钥。在线和离线模式使用同一产品公钥信任边界。
 
 ## 示例项目
 

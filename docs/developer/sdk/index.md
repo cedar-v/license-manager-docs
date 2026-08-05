@@ -2,7 +2,7 @@
 
 License Manager SDK 用于封装客户端常见授权能力，包括在线激活、许可证保存、本地验签、状态校验、硬件指纹和运行期心跳。
 
-在三种接入方式中，SDK 标准接入通常是业务系统的优先选择：它比原生 API 对接更少处理签名、许可证文件、心跳和错误映射细节，也比 AI 快速接入更适合沉淀为团队内部标准方案。
+SDK 可以减少底层接口和心跳处理工作，并支持把产品公钥配置为客户端固定信任根。新项目也可以使用 AI 原生 API 接入，让 AI 按相同安全边界直接完成业务集成。
 
 ## 当前推荐
 
@@ -22,8 +22,8 @@ C# SDK 仓库地址：[cedar-v/license-manager-dotnet](https://github.com/cedar-
 |------|------|
 | 硬件指纹 | 自动或半自动生成设备唯一标识 |
 | 在线激活 | 调用 `/api/v1/activate` 获取许可证 |
-| 本地保存 | 保存许可证和公钥 |
-| 本地验签 | 使用公钥验证许可证签名 |
+| 本地保存 | 保存许可证；产品公钥随程序只读交付 |
+| 本地验签 | 使用客户端内置产品公钥验证许可证签名 |
 | 授权状态校验 | 检查状态、有效期和设备绑定 |
 | 业务配置读取 | 读取功能开关、使用限制和自定义参数 |
 | 心跳同步 | 调用 `/api/v1/heartbeat` 同步运行期状态 |
@@ -34,13 +34,13 @@ C# SDK 仓库地址：[cedar-v/license-manager-dotnet](https://github.com/cedar-
 
 ```mermaid
 flowchart TD
-    A["准备授权服务地址、产品标识和激活码"] --> B["初始化 SDK"]
+    A["准备产品标识、产品公钥和激活码"] --> B["初始化 SDK"]
     B --> C["SDK 采集硬件指纹"]
     C --> D["SDK 读取本地许可证"]
     D --> E{"本地许可证有效?"}
     E -->|是| F["业务读取授权配置"]
     E -->|否| G["SDK 在线激活"]
-    G --> H["保存许可证和公钥"]
+    G --> H["使用内置产品公钥验签并保存许可证"]
     H --> F
     F --> I["启动业务功能"]
     I --> J["SDK 后台心跳"]
@@ -55,6 +55,11 @@ flowchart TD
 ```csharp
 using LicenseManager.DotNet;
 using LicenseManager.DotNet.Configuration;
+using System.Text;
+
+const string ProductPublicKeyPem = @"-----BEGIN PUBLIC KEY-----
+请替换为产品页面获取的完整公钥
+-----END PUBLIC KEY-----";
 
 var config = new LicenseClientConfig
 {
@@ -63,6 +68,7 @@ var config = new LicenseClientConfig
     Version = "1.0.0",
     AuthorizationCode = "LIC-XXXX-XXXX",
     LicenseFilePath = "license_code/license.lic",
+    PublicKeyPem = Encoding.UTF8.GetBytes(ProductPublicKeyPem),
     HardwareFields = new List<string> { "hostname", "cpu" },
     HeartbeatIntervalSeconds = 600
 };

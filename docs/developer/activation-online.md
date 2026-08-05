@@ -1,6 +1,6 @@
 # 在线激活
 
-在线激活适用于客户端首次运行时可以访问 License Manager 服务的场景。客户端提交授权码和硬件指纹，服务端校验通过后返回许可证和验签公钥。
+在线激活适用于客户端首次运行时可以访问 License Manager 服务的场景。开发者应在发布客户端前取得产品公钥并内置到程序中；客户端提交授权码、产品编码和硬件指纹，服务端校验通过后返回许可证。
 
 ## 适用场景
 
@@ -20,9 +20,9 @@ sequenceDiagram
     Client->>Client: 生成硬件指纹
     Client->>LM: POST /api/v1/activate
     LM->>LM: 校验授权码、有效期、设备数、锁定状态
-    LM-->>Client: 返回 license_file、public_key、license_key
-    Client->>Local: 保存许可证和公钥
-    Client->>Client: 本地验签与状态校验
+    LM-->>Client: 返回 license_file、license_key
+    Client->>Local: 保存许可证
+    Client->>Client: 使用内置产品公钥完成本地验签与状态校验
     Client-->>Client: 放行业务功能
 ```
 
@@ -40,6 +40,7 @@ POST /api/v1/activate
 |------|------|------|
 | `authorization_code` | 是 | 授权码 |
 | `hardware_fingerprint` | 是 | 当前设备硬件指纹 |
+| `product_code` | 推荐固定传入 | 客户端对应的产品编码 |
 | `software_version` | 否 | 客户端软件版本 |
 | `device_info` | 否 | 设备信息，例如系统、主机名、版本等 |
 
@@ -49,6 +50,7 @@ POST /api/v1/activate
 {
   "authorization_code": "LIC-DEMO-XXXX-XXXX",
   "hardware_fingerprint": "demo-device-fingerprint",
+  "product_code": "demo-app",
   "software_version": "1.0.0",
   "device_info": {
     "os": "Windows",
@@ -65,16 +67,16 @@ POST /api/v1/activate
 |------|------|
 | `license_key` | 许可证密钥，用于心跳和服务端查询 |
 | `license_file` | Base64 编码的许可证文件 |
-| `public_key` | 用于验签的 RSA 公钥，PEM 格式 |
+| `public_key` | 兼容字段；使用内置产品公钥接入时无需处理 |
 | `heartbeat_interval` | 心跳间隔，单位秒 |
 
-客户端应将 `license_file` 与 `public_key` 配对保存，后续校验该许可证时使用同一次激活返回的公钥。
+客户端使用开发阶段内置的产品公钥验证 `license_file`，接口响应中的 `public_key` 直接忽略。
 
 ## 后续启动
 
 激活成功后，客户端后续启动不应每次都强依赖在线激活。推荐顺序：
 
-1. 读取本地许可证和公钥
+1. 读取本地许可证和程序内置的产品公钥
 2. 本地验签
 3. 检查状态、有效期和设备指纹
 4. 放行业务功能
@@ -87,7 +89,7 @@ POST /api/v1/activate
 | 返回 400 | 请求字段缺失或格式错误 | 检查授权码和硬件指纹 |
 | 返回 404 | 授权码不存在 | 确认授权码是否来自当前环境 |
 | 返回 409 | 授权码已锁定、已过期或不可激活 | 查看授权状态和激活次数 |
-| 验签失败 | 公钥与许可证不匹配或许可证文件损坏 | 查看 [常见问题排查](./troubleshooting.md) |
+| 验签失败 | 许可证不是由当前产品签发或许可证文件损坏 | 查看 [常见问题排查](./troubleshooting.md) |
 
 ## 相关文档
 
