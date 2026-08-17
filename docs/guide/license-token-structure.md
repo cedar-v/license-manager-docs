@@ -110,7 +110,7 @@ flowchart TD
 ```json
 {
   "algorithm": "RSA-PSS-SHA256",
-  "data": "{\"status\":\"active\",\"deployment_type\":\"cloud\",\"hardware_fingerprint\":\"MAC:5e:a3...\",\"start_date\":\"2026-06-01T00:00:00+08:00\",\"end_date\":\"2027-06-01T00:00:00+08:00\",\"license_key\":\"LIC-DEVICE-XXXX\"}",
+  "data": "{\"status\":\"active\",\"deployment_type\":\"cloud\",\"hardware_fingerprint\":\"sha256:8f2c...\",\"start_date\":\"2026-06-01T00:00:00+08:00\",\"end_date\":\"2027-06-01T00:00:00+08:00\",\"license_key\":\"LIC-DEVICE-XXXX\"}",
   "signature": "BASE64_SIGNATURE"
 }
 ```

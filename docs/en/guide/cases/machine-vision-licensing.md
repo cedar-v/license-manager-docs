@@ -39,9 +39,11 @@ A composite fingerprint strategy addresses the reality of frequent production li
 
 | Binding Level | Fingerprint Sources | Use Case | Changeover Friendliness |
 |---|---|---|---|
-| **Relaxed** | MAC address only | Fixed-station devices | ⭐ |
-| **Standard** | MAC + CPU serial | Standard production lines | ⭐⭐⭐ |
-| **Strict** | MAC + CPU + motherboard + HDD serial | High-security environments | ⭐⭐⭐⭐⭐ |
+| **Relaxed** | Stable OS device ID | Desktop and managed workstation software | ⭐⭐⭐⭐⭐ |
+| **Standard** | Validated firmware System UUID | Standard production lines | ⭐⭐⭐⭐ |
+| **Strict** | System UUID + motherboard + CPU identifiers | High-security offline environments | ⭐⭐ |
+
+MAC addresses, IP addresses, adapter names, and other network-interface data are excluded at every level because ordinary network, VPN, virtual-adapter, or NIC changes can alter them.
 
 Changeover quotas are supported: each license period allows N free device swaps, with additional swaps auto-approved upon admin authorization.
 

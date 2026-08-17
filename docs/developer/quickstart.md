@@ -45,14 +45,16 @@ POST /api/v1/license-by-fingerprint
 
 ## 第二步：准备硬件指纹
 
-客户端激活时必须提交 `hardware_fingerprint`。硬件指纹应由客户端根据设备特征生成，常见来源包括：
+客户端激活时必须提交 `hardware_fingerprint`。硬件指纹应由客户端根据稳定设备特征生成，优先来源包括：
 
-- MAC 地址
-- 主机名
-- CPU 信息
-- 内存信息
+- Windows `MachineGuid`
+- Linux `machine-id`
+- macOS `IOPlatformUUID`
+- 固件 `System UUID` 或经过有效性检查的主板、CPU 标识
 
-建议客户端使用稳定字段组合生成指纹，避免因为普通软件升级导致指纹变化。更多策略见 [硬件指纹策略](./hardware-fingerprint.md)。
+不要采集或使用 MAC 地址、IP 地址、网卡名称、网卡编号等网络接口信息生成指纹，也不要把它们作为回退值。否则更换网卡、切换联网方式、启停 VPN 或虚拟网卡都可能使已激活设备被误判为新设备。
+
+建议客户端固定字段来源和规范化规则，并测试正常重启、软件升级和网络环境变化后指纹保持一致。更多策略见 [硬件指纹策略](./hardware-fingerprint.md)。
 
 ## 第三步：完成首次在线激活
 

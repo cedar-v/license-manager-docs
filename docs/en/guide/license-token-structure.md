@@ -74,7 +74,7 @@ The `data` field carries every parameter that governs runtime behavior. After de
 | `status` | `active`, `revoked` | Current license state. Only **active** may proceed; expiry is determined separately from the validity dates. |
 | `deployment_type` | `standalone`, `cloud`, `hybrid` | Determines runtime synchronization behavior. All modes verify locally first; cloud and hybrid may also use heartbeat for remote updates. |
 | `start_date` / `end_date` | ISO 8601 timestamp | Validity window for the license. Compare against system time during startup; treat any `end_date` in the past as expired. |
-| `hardware_fingerprint` | String | Combination of hardware identifiers (MAC/CPU/HostID, etc.). Recalculate locally and compare; mismatch implies unauthorized copy. |
+| `hardware_fingerprint` | String | Deterministic hash of a stable OS or firmware device identifier. Do not derive it from MAC addresses or other network-interface data. Recalculate locally and compare; mismatch implies an unauthorized copy or a genuine device-identity change. |
 | `product_code` | String | Product that issued the license. |
 | `usage_limits` | Object | Usage quotas (API calls, seat counts, etc.). |
 | `feature_config` | Object | Key-value feature switches controlling which modules (Basic vs Pro) the client may enable. |
@@ -89,7 +89,7 @@ Here is a decoded license sample to highlight formatting and field expectations:
 ```json
 {
   "algorithm": "RSA-PSS-SHA256",
-  "data": "{\"activated_at\":\"2025-11-01T22:30:02...\",\"status\":\"active\",\"product_code\":\"demo-app\",\"deployment_type\":\"standalone\",\"hardware_fingerprint\":\"MAC:5e:a3...\",\"end_date\":\"2027-03-03T23:59:59+08:00\", ...}",
+  "data": "{\"activated_at\":\"2025-11-01T22:30:02...\",\"status\":\"active\",\"product_code\":\"demo-app\",\"deployment_type\":\"standalone\",\"hardware_fingerprint\":\"sha256:8f2c...\",\"end_date\":\"2027-03-03T23:59:59+08:00\", ...}",
   "signature": "MQDlxx/crzncJfw2Y00X5spzN1bPWKuU4IDxB48Mwy1WMhOoYUDCcrYjiMgNJHsXzUSD14MURqCBKBMgQAc7EOiUUcwfJ1mhSGvbFYnrSGFxjpbEHUg6dJlgSB4jSxwh4jtHSOb82SvPkHrNE0/p/HKN2Vr3Dj2qU0JB7hM2Jd0vb3Tk7WiFWd9as3vvAChhzoXqHo53vtY7ZyUb56VM/M4UMwJ4w4S7M3DZiPwAAobOn1MfOmOnchXzc+lkhC9c67xprmOi33ms775Dc0tNurv+rCLTQN8wgnt5dfhmdyMbsIk2c188IK/7uca2Pi3qaBKSIkVkSKN78pI2A6gMYIA=="
 }
 ```

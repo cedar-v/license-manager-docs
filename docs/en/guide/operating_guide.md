@@ -8,7 +8,7 @@ This guide walks through the complete lifecycle of License Manager: “create li
 
 - **License Code**: A unique identifier generated after configuring a license policy in the admin console. It defines validity period, max activations, feature set, and deployment mode.
 - **License File / Key**: An encrypted artifact bound to a specific device fingerprint. Clients validate locally with this license during startup.
-- **Hardware Fingerprint**: Machine identifiers (MAC, CPU serial, HostID, etc.) collected by the client or manually to prevent cloning.
+- **Hardware Fingerprint**: A deterministic hash derived from a stable OS or firmware device identifier. MAC addresses and other network-interface data should not be collected or used because normal network changes can alter them.
 - **Heartbeat**: Periodic status data reported by online/hybrid clients, enabling remote control, renewals, and auditing.
 
 ## End-to-End Flow
@@ -97,8 +97,7 @@ graph TD
 
 - **Activation limit reached**: In “Customer Details → Activated Devices”, release inactive devices or raise the activation cap.
 - **Heartbeat timeout**: Ensure the client can reach the License Manager API endpoint; allow the domain/port on gateways or proxies.
-- **Fingerprint changes**: Use multi-factor fingerprints (MAC + CPU + HostID) and enable “fingerprint similarity” rules to avoid reissuing due to a single component swap.
+- **Fingerprint changes**: Keep the algorithm independent of MAC addresses, IP addresses, adapters, VPNs, and virtual interfaces. Prefer one validated OS or firmware device identifier and define an explicit reauthorization path for genuine device changes.
 - **Offline updates**: Prepare an “offline update bundle” with the license, client SDK, and config templates to minimize manual copy errors.
 
 Following these steps lets you deliver, monitor, and renew licenses efficiently across diverse customer environments—maximizing the value of License Manager’s lifecycle management capabilities.
-

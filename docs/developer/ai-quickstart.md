@@ -31,7 +31,7 @@ AI 接入分为两段：
 <metadata>
 name=雪松授权云客户端接入协议
 api_version=v1
-revision=2026-08-05
+revision=2026-08-17
 default_api_base=https://lic.cedar-v.com
 transport=HTTPS + JSON
 authentication=以下客户端公开接口不需要登录或 API Key
@@ -45,6 +45,11 @@ PRODUCT_PUBLIC_KEY_PEM=<必填：从产品列表“获取公钥”复制的完�
 - 所有许可证都使用 PRODUCT_PUBLIC_KEY_PEM 验签。
 - 忽略激活、试用和恢复接口响应中的 public_key，不比较、不保存，也不用它更新 PRODUCT_PUBLIC_KEY_PEM。
 </product_trust>
+
+<hardware_fingerprint_contract>
+- 生成稳定、确定的 hardware_fingerprint；禁止使用 MAC、IP、网卡名称或网卡编号等网络接口信息。
+- 优先使用操作系统或固件提供的稳定设备标识，如 Windows MachineGuid、Linux machine-id、macOS IOPlatformUUID 或固件 System UUID，规范化后生成哈希。
+</hardware_fingerprint_contract>
 
 <response_contract>
 请求头：
@@ -318,7 +323,7 @@ LICENSE_DIR=<让 AI 选择当前操作系统规范的应用数据目录>
 IMPORT_FORMAT=<默认只导入 license_file 文本；可按项目修改>
 
 请先检查对接项目，然后直接实现：
-1. 定义稳定硬件指纹算法，固定字段来源、顺序、大小写和规范化规则；提供“显示/复制/导出指纹”功能。
+1. 按协议中的 hardware_fingerprint_contract 定义稳定硬件指纹算法，明确禁止采集或使用 MAC 及其他网络接口信息；固定字段来源、顺序、大小写和规范化规则，并提供“显示/复制/导出指纹”功能。
 2. 将 PRODUCT_PUBLIC_KEY_PEM 写入代码或随程序发布的只读资源；手工导入入口只接收 license_file，不允许导入或替换验签公钥。
 3. 离线客户端不调用 activate、heartbeat、trial-license 或 license-by-fingerprint。
 4. 导入时先按固定协议完成 RSA-PSS 验签，再检查 active 状态、有效期和设备指纹；全部通过后才原子保存。
@@ -383,5 +388,6 @@ PARAMETER_MAPPING=<custom_parameters 字段与业务参数的映射>
 - 已在平台为授权码关联产品，并取得该产品的 PEM 公钥。
 - 已把 `PRODUCT_CODE` 和 `PRODUCT_PUBLIC_KEY_PEM` 替换为真实产品信息；公钥完整保留 BEGIN/END 行和换行。
 - 已从 A–D 中选择一个主流程，并修改其中的产品编码和业务占位项。
+- 已确认指纹算法不读取、不使用 MAC 或其他网络接口信息，并测试切换网络、启停 VPN、增删虚拟网卡后指纹不变。
 - 如需使用许可证配置控制业务，已在主流程后追加模板 E。
 - 提示词中没有真实授权码、许可证、产品私钥或客户敏感信息；产品公钥可以提供给 AI。
