@@ -44,17 +44,11 @@ dotnet pack .\license-manager-dotnet\license-manager-dotnet.csproj -c Release
 
 ## 最小在线接入
 
-在线模式下，开发者先从产品页面获取产品公钥并配置到 SDK。首次启动时 SDK 会采集硬件指纹、读取本地许可证；如果本地没有有效许可证，则使用激活码调用雪松授权云平台完成在线激活。SDK 使用配置的产品公钥验签、保存许可证文件并启动后台心跳，业务代码无需处理接口响应中的公钥。
+在线模式下，首次启动时 SDK 会采集硬件指纹并读取本地许可证；如果本地没有有效许可证，则使用激活码完成在线激活。激活接口返回产品公钥后，SDK 使用它验证许可证并缓存两者，然后启动后台心跳。首次在线激活不需要提前配置公钥。
 
 ```csharp
 using LicenseManager.DotNet;
 using LicenseManager.DotNet.Configuration;
-using System.Text;
-
-const string ProductPublicKeyPem = @"-----BEGIN PUBLIC KEY-----
-请替换为产品页面获取的完整公钥
------END PUBLIC KEY-----";
-
 var config = new LicenseClientConfig
 {
     Server = "https://lic.cedar-v.com",
@@ -62,7 +56,6 @@ var config = new LicenseClientConfig
     Version = "1.0.0",
     AuthorizationCode = "LIC-XXXX-XXXX",
     LicenseFilePath = "license_code/license.lic",
-    PublicKeyPem = Encoding.UTF8.GetBytes(ProductPublicKeyPem),
     HardwareFields = new List<string> { "hostname", "cpu" },
     HeartbeatIntervalSeconds = 600
 };
@@ -87,7 +80,7 @@ Console.WriteLine($"到期时间：{license?.ExpiresAt:u}");
 | `Version` | 是 | 当前软件版本，会随激活和心跳上报 |
 | `AuthorizationCode` | 首次在线激活必填 | 激活码，也可以通过 `AuthorizationCodePath` 从文件读取 |
 | `LicenseFilePath` | 否 | 本地许可证文件路径，默认 `license_code/license.lic` |
-| `PublicKeyPath` / `PublicKeyPem` | 正式接入必填 | 从产品页面获取的产品公钥，作为客户端固定验签信任根 |
+| `PublicKeyPath` / `PublicKeyPem` | 在线首次激活可不填；离线模式必填 | 显式提供产品公钥，适用于纯离线或固定信任根场景 |
 | `Offline` | 否 | 是否启用离线模式 |
 | `HardwareFields` | 否 | 硬件指纹字段，推荐默认 `hostname`、`cpu` |
 | `HeartbeatIntervalSeconds` | 否 | 本地默认心跳间隔；服务端心跳响应可覆盖下一轮间隔 |
@@ -107,7 +100,7 @@ flowchart TD
     E -->|是| F["启动后台心跳"]
     E -->|否| G{"是否在线模式且有激活码?"}
     G -->|是| H["调用 /api/v1/activate 在线激活"]
-    H --> I["使用配置的产品公钥验签并保存许可证"]
+    H --> I["使用响应公钥验签并缓存许可证与公钥"]
     I --> F
     G -->|否| J["抛出异常并提示激活"]
     F --> K["业务读取授权配置并启动"]
@@ -243,7 +236,7 @@ var config = new LicenseClientConfig
     Version = "1.0.0",
     Offline = true,
     LicenseFilePath = "license_code/license.lic",
-    PublicKeyPem = Encoding.UTF8.GetBytes(ProductPublicKeyPem),
+    PublicKeyPath = "license_code/license.pubkey",
     HardwareFields = new List<string> { "hostname", "cpu" }
 };
 
@@ -251,7 +244,7 @@ using var client = await LicenseClient.CreateAsync(config);
 client.Validate();
 ```
 
-离线模式要求本地已经存在许可证文件，并通过 `PublicKeyPath` 或 `PublicKeyPem` 配置产品公钥。在线和离线模式使用同一产品公钥信任边界。
+离线模式要求本地已经存在许可证文件，并通过 `PublicKeyPath` 或 `PublicKeyPem` 配置同批交付的产品公钥。在线和离线模式使用同一产品级公钥信任边界。
 
 ## 示例项目
 

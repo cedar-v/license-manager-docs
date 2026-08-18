@@ -43,7 +43,7 @@ https://lic.cedar-v.com/
 | 心跳同步 | `POST /api/v1/heartbeat` | 无需登录 | 上报在线状态、使用数据，检查配置更新 |
 | 试用状态查询 | `POST /api/v1/trial-license/status` | 无需登录 | 查询当前设备是否可领取产品试用 |
 | 领取试用许可证 | `POST /api/v1/trial-license` | 无需登录 | 为设备自动签发试用授权和许可证 |
-| 按设备指纹查询许可证 | `POST /api/v1/license-by-fingerprint` | 无需登录 | 查询该设备最新许可证和兼容公钥字段 |
+| 按设备指纹查询许可证 | `POST /api/v1/license-by-fingerprint` | 无需登录 | 查询该设备最新许可证和对应产品公钥 |
 
 ## 在线激活
 
@@ -102,7 +102,7 @@ Content-Type: application/json
 - `license_key`
 - `heartbeat_interval`
 
-采用内置产品公钥接入时，`public_key` 是兼容字段，客户端无需处理。
+`public_key` 是当前产品的 RSA 公钥。首次在线获取时，客户端先用它验证同次响应的 `license_file`，完整校验通过后配对保存。完整规则见 [许可证结构与验证](/guide/license-token-structure.md)。
 
 ### 激活异常
 
@@ -193,7 +193,7 @@ Content-Type: application/json
 }
 ```
 
-客户端收到新的 `license_file` 后，应先使用程序内置的产品公钥完成验签及许可证状态校验，再原子替换本地许可证。
+客户端收到新的 `license_file` 后，应先使用本地已保存的产品公钥完成验签及许可证状态校验，再原子替换本地许可证；失败时保留旧许可证。
 
 ### 心跳异常
 
@@ -370,7 +370,7 @@ Content-Type: application/json
 
 ## 按设备指纹查询许可证
 
-客户端可以根据设备指纹查询该设备最新的许可证信息，包含许可证文件和兼容公钥字段，可用于恢复本地许可证或同步授权状态。恢复得到的公钥必须与客户端内置产品公钥一致。
+客户端可以根据设备指纹查询该设备最新的许可证和对应产品公钥，用于恢复本地授权状态。客户端使用同次响应公钥验证许可证，完整校验通过后配对保存。
 
 ```http
 POST /api/v1/license-by-fingerprint
@@ -430,9 +430,9 @@ Content-Type: application/json
 ## 客户端处理建议
 
 1. 所有接口都先判断 `code === "000000"`，再读取 `data`。
-2. 使用发布前内置的产品公钥验签，忽略响应中的 `public_key`。
+2. 激活、试用和按指纹恢复使用同次响应的产品公钥验签并配对保存。
 3. `heartbeat_interval` 使用服务端返回值，不要在客户端写死。
-4. 心跳接口返回 `license_file` 时，说明授权配置可能更新；客户端应先使用内置产品公钥完整校验，再原子覆盖本地许可证。
+4. 心跳接口返回 `license_file` 时，说明授权配置可能更新；客户端应先使用已保存产品公钥完整校验，再原子覆盖本地许可证。
 5. 试用状态查询返回 `code=000000` 但 `can_issue_trial=false` 时，不应继续调用领取试用接口。
 6. 对激活、心跳、试用领取、设备指纹查询都要记录 `code`、`message` 和请求时间，便于排查。
 

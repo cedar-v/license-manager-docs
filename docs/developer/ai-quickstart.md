@@ -5,13 +5,13 @@ AI 接入分为两段：
 1. **协议提示词**：所有场景都需要，包含接口输入输出、许可证结构、验签算法、状态和错误码。
 2. **业务提示词**：按项目场景选择一个模板，并根据实际业务修改其中的占位项。
 
-::: warning 对接前必须准备产品公钥
+::: tip 对接前准备
 1. 在雪松授权云中创建或选择一个产品。
-2. 在产品列表点击“获取公钥”，复制完整的 PEM 公钥。
-3. 将产品编码和产品公钥填入下面提示词的 `PRODUCT_CODE`、`PRODUCT_PUBLIC_KEY_PEM`。
-4. AI 会把产品公钥写入客户端代码或随程序发布的只读资源，并使用它验证许可证。
+2. 为授权码关联该产品，并取得产品编码。
+3. 将产品编码填入下面提示词的 `PRODUCT_CODE`。
+4. 首次在线激活、试用或恢复会返回许可证和产品公钥，客户端验签通过后配对保存。
 
-公钥可以公开，也可以提供给 AI；不要提供产品私钥。接口响应中的 `public_key` 无需处理。
+纯离线项目需要将许可证和产品公钥作为同一交付批次导入。任何场景都不要向 AI 或客户端提供产品私钥。
 :::
 
 ::: tip 使用方法
@@ -31,7 +31,7 @@ AI 接入分为两段：
 <metadata>
 name=雪松授权云客户端接入协议
 api_version=v1
-revision=2026-08-17
+revision=2026-08-18
 default_api_base=https://lic.cedar-v.com
 transport=HTTPS + JSON
 authentication=以下客户端公开接口不需要登录或 API Key
@@ -39,11 +39,12 @@ authentication=以下客户端公开接口不需要登录或 API Key
 
 <product_trust>
 PRODUCT_CODE=<必填：雪松授权云产品编码>
-PRODUCT_PUBLIC_KEY_PEM=<必填：从产品列表“获取公钥”复制的完整PEM公钥>
 
-- 在开发或构建阶段把 PRODUCT_PUBLIC_KEY_PEM 写入客户端代码，或打包为随程序发布的只读资源。
-- 所有许可证都使用 PRODUCT_PUBLIC_KEY_PEM 验签。
-- 忽略激活、试用和恢复接口响应中的 public_key，不比较、不保存，也不用它更新 PRODUCT_PUBLIC_KEY_PEM。
+- public_key 是产品级 RSA 公钥，同一产品签发的许可证使用同一产品公钥验签。
+- 首次在线激活、试用或恢复使用同次响应中的 public_key 验证 license_file；完整校验通过后配对保存两者。
+- 心跳不返回新 public_key；心跳的新 license_file 使用本地已保存的产品公钥验签。
+- 纯离线项目将 license_file 与产品公钥作为同一交付批次导入。
+- 预置或钉扎产品公钥是可选增强策略，不是首次在线激活的必要条件。
 </product_trust>
 
 <hardware_fingerprint_contract>
@@ -83,7 +84,7 @@ POST /api/v1/activate
   "license_key":"后续心跳使用",
   "license_file":"Base64许可证",
   "heartbeat_interval":300,
-  "public_key":"兼容字段；客户端无需处理"
+  "public_key":"产品级RSA公钥PEM；与license_file配对验签和保存"
 }
 authorization_code 兼容“授权码&附加串”，服务端只使用 & 前的授权码。
 
@@ -106,7 +107,7 @@ POST /api/v1/heartbeat
   "license_file":null,
   "heartbeat_interval":300
 }
-config_updated=true 时可能返回新的 license_file；心跳不返回新 public_key，始终使用客户端内置的 PRODUCT_PUBLIC_KEY_PEM 验签。
+config_updated=true 时可能返回新的 license_file；心跳不返回新 public_key，使用客户端本地已保存的产品公钥验签。
 
 3. 查询试用资格
 POST /api/v1/trial-license/status
@@ -141,7 +142,7 @@ POST /api/v1/trial-license
   "license_key":"许可证密钥",
   "license_file":"Base64许可证",
   "heartbeat_interval":300,
-  "public_key":"兼容字段；客户端无需处理",
+  "public_key":"产品级RSA公钥PEM；与license_file配对验签和保存",
   "trial":true,
   "trial_days":14,
   "end_date":"RFC3339时间"
@@ -168,7 +169,7 @@ license_file 是 Base64 编码的 JSON：
 验签顺序不可改变：
 1. Base64 解码 license_file，解析顶层 algorithm、data、signature。
 2. algorithm 必须等于 RSA-PSS-SHA256。
-3. 从客户端内置的 PRODUCT_PUBLIC_KEY_PEM 解析 RSA 公钥。
+3. 选择与当前许可证配对的产品公钥：在线首次获取使用同次响应的 public_key，后续启动或心跳使用本地已保存公钥，纯离线使用同批导入公钥。
 4. Base64 解码 signature。
 5. 对 data 原始 UTF-8 字节计算 SHA-256。禁止解析 data 后重新序列化再验签。
 6. 使用 RSA-PSS + SHA-256 验签，PSS salt length 等于 SHA-256 哈希长度 32 字节。
@@ -204,9 +205,9 @@ deployment_type、max_activations、feature_config、usage_limits、custom_param
 
 <protocol_invariants>
 - 使用对接项目语言的 HTTP 能力和成熟密码学库，不使用 License Manager SDK。
-- 客户端只持久化可变的 license_file；产品公钥随程序交付。
-- 忽略接口响应中的 public_key，不比较、不保存、不更新内置产品公钥。
-- 激活、试用、恢复或心跳返回许可证后，使用内置产品公钥完成验签，再检查状态、时间和指纹，然后保存或替换。
+- 激活、试用或恢复同时返回 license_file 与 public_key；先使用本次响应公钥完成验签、状态、时间和指纹校验，再配对原子保存。
+- 心跳返回新 license_file 时使用本地已保存的产品公钥完成同样校验，通过后只替换许可证；失败时保留旧许可证。
+- 纯离线导入必须同时取得 license_file 与产品公钥，先完整校验再配对保存。
 - 日志不得输出完整授权码、license_key、license_file、客户敏感信息或任何私钥。
 - HTTP 客户端必须设置超时；生产环境使用 HTTPS。
 - 网络错误、HTTP 错误、业务 code 错误和本地许可证错误必须能够区分。
@@ -222,7 +223,7 @@ deployment_type、max_activations、feature_config、usage_limits、custom_param
 
 先从 A–D 选择一个主流程；如果许可证配置还要控制具体业务，再追加模板 E。
 
-下面模板是起点，不是强制产品流程。复制前请修改 `PRODUCT_CODE`、`PRODUCT_PUBLIC_KEY_PEM`、授权保护范围、文件位置和断网策略；不需要的功能直接删除。
+下面模板是起点，不是强制产品流程。复制前请修改 `PRODUCT_CODE`、授权保护范围、文件位置和断网策略；不需要的功能直接删除。
 
 <span id="template-a"></span>
 
@@ -234,13 +235,12 @@ deployment_type、max_activations、feature_config、usage_limits、custom_param
 <business_requirement>
 场景：最小在线激活
 PRODUCT_CODE=<产品编码>
-PRODUCT_PUBLIC_KEY_PEM=<从产品列表“获取公钥”复制的完整PEM公钥>
 PROTECTED_BUSINESS=<需要授权保护的启动入口或业务功能；让 AI 从项目中识别>
 LICENSE_DIR=<让 AI 选择当前操作系统规范的应用数据目录>
 
 请先检查对接项目的启动、配置、持久化和日志方式，然后直接实现：
 1. 首次启动没有本地许可证时，让用户输入授权码，调用在线激活接口。
-2. 将 PRODUCT_PUBLIC_KEY_PEM 写入代码或只读资源；使用它验证响应中的 license_file，忽略响应中的 public_key，成功后只原子保存 license_file。
+2. 使用响应中的 public_key 验证同次响应的 license_file；完整校验成功后，原子保存许可证与产品公钥。
 3. 后续每次启动都先做本地验签、active 状态、有效期和设备指纹检查，再放行 PROTECTED_BUSINESS。
 4. 长时间运行的程序在关键业务执行前或固定本地周期重新检查 end_date；不重复调用激活接口。
 5. 不实现试用、心跳和远程配置。
@@ -260,7 +260,6 @@ LICENSE_DIR=<让 AI 选择当前操作系统规范的应用数据目录>
 <business_requirement>
 场景：在线激活与免费试用
 PRODUCT_CODE=<产品编码>
-PRODUCT_PUBLIC_KEY_PEM=<从产品列表“获取公钥”复制的完整PEM公钥>
 PROTECTED_BUSINESS=<需要授权保护的启动入口或业务功能；让 AI 从项目中识别>
 LICENSE_DIR=<让 AI 选择当前操作系统规范的应用数据目录>
 
@@ -268,7 +267,7 @@ LICENSE_DIR=<让 AI 选择当前操作系统规范的应用数据目录>
 1. 启动时优先验证本地正式或试用许可证；有效则直接进入业务。
 2. 没有本地许可证时，同时提供“输入授权码”和“免费试用”两个明确入口。
 3. 用户选择试用后，先调用试用资格接口；只有 code=000000 且 can_issue_trial=true 才能领取。
-4. 激活或领取返回的许可证必须按固定协议验签后再保存。
+4. 激活或领取返回的许可证必须使用同次响应的产品公钥按固定协议验签，完整校验通过后配对保存。
 5. 正式许可证与试用状态明确区分；试用不得静默覆盖仍有效的正式许可证。
 6. 到期后阻断受保护业务，并引导用户输入正式授权码。
 7. 不实现心跳；如果项目需要远程撤销或配置同步，应改用模板 C。
@@ -287,18 +286,17 @@ LICENSE_DIR=<让 AI 选择当前操作系统规范的应用数据目录>
 <business_requirement>
 场景：在线激活与远程授权管控
 PRODUCT_CODE=<产品编码>
-PRODUCT_PUBLIC_KEY_PEM=<从产品列表“获取公钥”复制的完整PEM公钥>
 PROTECTED_BUSINESS=<需要授权保护的启动入口或业务功能；让 AI 从项目中识别>
 LICENSE_DIR=<让 AI 选择当前操作系统规范的应用数据目录>
 NETWORK_FAILURE_POLICY=<例如：本地许可证有效时继续运行并告警；请按业务修改>
 
 请先检查对接项目，然后直接实现：
-1. 启动时先校验本地许可证；没有本地文件时依次提供按指纹恢复和授权码激活入口。
+1. 启动时先使用本地保存的产品公钥校验许可证；没有本地文件时依次提供按指纹恢复和授权码激活入口，并使用响应公钥验证后配对保存。
 2. 本地校验通过即可启动业务，不把每次启动强绑定到实时网络。
 3. cloud 或 hybrid 模式按服务端 heartbeat_interval 在后台发送心跳，不能写死间隔。
 4. usage_data 发送当前完整快照；并发更新必须安全。
 5. config_updated_at 优先使用许可证字段；首次为空时保存激活成功时间作为本地同步时间。
-6. 心跳返回新 license_file 时，先用内置 PRODUCT_PUBLIC_KEY_PEM 完成全部校验，再原子替换；失败时保留旧文件。
+6. 心跳返回新 license_file 时，先用本地已保存的产品公钥完成全部校验，再原子替换；失败时保留旧文件。
 7. 收到 code=300007、status 非 active 或有效的撤销结果后，立即阻断后续受保护业务。
 8. 临时网络失败按 NETWORK_FAILURE_POLICY 处理，不能误判为撤销，也不能卡死应用启动。
 9. 根据对接项目业务映射 feature_config、usage_limits、custom_parameters；不确定字段含义时列出映射点让用户修改。
@@ -317,14 +315,13 @@ NETWORK_FAILURE_POLICY=<例如：本地许可证有效时继续运行并告警�
 <business_requirement>
 场景：纯离线部署与手工导入
 PRODUCT_CODE=<产品编码>
-PRODUCT_PUBLIC_KEY_PEM=<从产品列表“获取公钥”复制的完整PEM公钥>
 PROTECTED_BUSINESS=<需要授权保护的启动入口或业务功能；让 AI 从项目中识别>
 LICENSE_DIR=<让 AI 选择当前操作系统规范的应用数据目录>
-IMPORT_FORMAT=<默认只导入 license_file 文本；可按项目修改>
+IMPORT_FORMAT=<默认导入 license_file 与产品公钥；可按项目定义单包或双文件格式>
 
 请先检查对接项目，然后直接实现：
 1. 按协议中的 hardware_fingerprint_contract 定义稳定硬件指纹算法，明确禁止采集或使用 MAC 及其他网络接口信息；固定字段来源、顺序、大小写和规范化规则，并提供“显示/复制/导出指纹”功能。
-2. 将 PRODUCT_PUBLIC_KEY_PEM 写入代码或随程序发布的只读资源；手工导入入口只接收 license_file，不允许导入或替换验签公钥。
+2. 手工导入入口同时接收 license_file 与同批交付的产品公钥；二者匹配且完整校验通过后才配对保存。固定公钥或公钥钉扎只在用户明确要求时实现。
 3. 离线客户端不调用 activate、heartbeat、trial-license 或 license-by-fingerprint。
 4. 导入时先按固定协议完成 RSA-PSS 验签，再检查 active 状态、有效期和设备指纹；全部通过后才原子保存。
 5. 每次启动和关键业务执行前进行本地校验，到期、篡改或设备变化时阻断受保护业务。
@@ -385,8 +382,8 @@ PARAMETER_MAPPING=<custom_parameters 字段与业务参数的映射>
 
 - AI 编程工具当前打开的是需要加入授权功能的对接项目根目录。
 - 已完整复制第一段协议提示词。
-- 已在平台为授权码关联产品，并取得该产品的 PEM 公钥。
-- 已把 `PRODUCT_CODE` 和 `PRODUCT_PUBLIC_KEY_PEM` 替换为真实产品信息；公钥完整保留 BEGIN/END 行和换行。
+- 已在平台为授权码关联产品，并取得真实 `PRODUCT_CODE`。
+- 在线流程已按“响应许可证与产品公钥配对校验和保存”实现；纯离线流程已准备同批交付的许可证与产品公钥。
 - 已从 A–D 中选择一个主流程，并修改其中的产品编码和业务占位项。
 - 已确认指纹算法不读取、不使用 MAC 或其他网络接口信息，并测试切换网络、启停 VPN、增删虚拟网卡后指纹不变。
 - 如需使用许可证配置控制业务，已在主流程后追加模板 E。

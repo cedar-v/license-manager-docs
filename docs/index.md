@@ -40,7 +40,7 @@ hero:
       <iconify-icon icon="solar:shield-keyhole-bold-duotone" width="48" height="48"></iconify-icon>
     </div>
     <h3>安全可控</h3>
-    <p>支持硬件指纹绑定、许可证签名校验与一许可证一对密钥的安全策略</p>
+    <p>支持产品级签名公钥、许可证本地验签与硬件指纹绑定</p>
   </div>
   <div class="value-card">
     <div class="value-icon">

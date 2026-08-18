@@ -1,6 +1,6 @@
 # 在线激活
 
-在线激活适用于客户端首次运行时可以访问 License Manager 服务的场景。开发者应在发布客户端前取得产品公钥并内置到程序中；客户端提交授权码、产品编码和硬件指纹，服务端校验通过后返回许可证。
+在线激活适用于客户端首次运行时可以访问 License Manager 服务的场景。客户端提交授权码、产品编码和硬件指纹，服务端校验通过后返回许可证和产品级公钥；首次在线激活不要求预先内置公钥。
 
 ## 适用场景
 
@@ -20,9 +20,9 @@ sequenceDiagram
     Client->>Client: 生成硬件指纹
     Client->>LM: POST /api/v1/activate
     LM->>LM: 校验授权码、有效期、设备数、锁定状态
-    LM-->>Client: 返回 license_file、license_key
-    Client->>Local: 保存许可证
-    Client->>Client: 使用内置产品公钥完成本地验签与状态校验
+    LM-->>Client: 返回 license_file、public_key、license_key
+    Client->>Client: 使用响应公钥完成验签与状态校验
+    Client->>Local: 配对保存许可证和产品公钥
     Client-->>Client: 放行业务功能
 ```
 
@@ -67,16 +67,16 @@ POST /api/v1/activate
 |------|------|
 | `license_key` | 许可证密钥，用于心跳和服务端查询 |
 | `license_file` | Base64 编码的许可证文件 |
-| `public_key` | 兼容字段；使用内置产品公钥接入时无需处理 |
+| `public_key` | 当前产品的 RSA 公钥；用于验证并与本次许可证配对保存 |
 | `heartbeat_interval` | 心跳间隔，单位秒 |
 
-客户端使用开发阶段内置的产品公钥验证 `license_file`，接口响应中的 `public_key` 直接忽略。
+客户端先使用响应中的 `public_key` 验证同次返回的 `license_file`，完成状态、有效期和设备指纹检查后，再配对保存。完整规则见 [许可证结构与验证](/guide/license-token-structure.md)。
 
 ## 后续启动
 
 激活成功后，客户端后续启动不应每次都强依赖在线激活。推荐顺序：
 
-1. 读取本地许可证和程序内置的产品公钥
+1. 读取本地许可证和配对保存的产品公钥
 2. 本地验签
 3. 检查状态、有效期和设备指纹
 4. 放行业务功能

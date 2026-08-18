@@ -1,116 +1,67 @@
-# License Structure & Validation (Client Essentials)
+# License Structure & Validation (Client Source of Truth)
 
-The system issues licenses as **Base64-encoded JSON strings**. Before releasing a client, obtain the product public key from the product page and embed it in code or a read-only application resource. During startup the client uses that key for signature verification, then checks the hardware fingerprint, expiry, and status.
+> Applies to: License Manager API v1 and official SDKs
+>
+> Effective: 2026-08-18
+>
+> This page supersedes the former requirement to embed a product public key before first online activation.
 
-> The `public_key` returned by activation or recovery is a compatibility field and may be ignored by clients that embed the product public key.
+License Manager protects licenses with RSA signatures. A signing public key belongs to a **product**: licenses issued for the same product are verified with that product's public key. The system does not create a separate key pair for every license.
 
-## 1. Startup Flow Overview
+## Where the public key comes from
 
-Begin with the big picture: the following Mermaid diagram outlines each validation checkpoint after the client receives a license string, including all failure exits.
+| Scenario | Public-key source | Client action |
+|---|---|---|
+| First online activation, trial, or recovery | `public_key` returned with `license_file` | Verify the returned license with that key, then persist the verified pair |
+| Heartbeat returns a new license | Product public key already stored locally | Fully validate the new license, then replace only the license file |
+| Fully offline import | Product public key delivered in the same batch as the license | Validate the pair before persisting it |
 
-```mermaid
-flowchart TD
-    %% Nodes
-    Start([Client boot]) --> GetToken[Fetch Base64 license string]
-    GetToken --> Decode[Base64 decode]
+Preloading or pinning a product public key is an optional hardening measure. It is not required for first online activation.
 
-    Decode --> ParseJSON{Parse JSON structure?}
-    ParseJSON -- No --> ErrFormat[Stop: invalid format]
-    ParseJSON -- Yes --> Extract[Extract core fields: <br/>data, signature, algorithm]
+## First online acquisition
 
-    %% Signature stage
-    Extract --> VerifySig[[RSA signature verify]]
-    VerifySig -- Fail --> ErrTamper[Stop: license tampered]
-    VerifySig -- Pass --> ParseData[Deserialize data payload]
+The activation, trial, and fingerprint-recovery responses can return both `license_file` and `public_key`. The client must:
 
-    %% Business logic
-    ParseData --> CheckStatus{Check active status & validity}
-    CheckStatus -- Revoked / Expired --> ErrStatus[Stop: revoked or expired]
-    CheckStatus -- Active & valid --> CheckType{Detect deployment type}
+1. Parse the returned product public key.
+2. Base64-decode the license envelope.
+3. Verify the signature over the original `data` UTF-8 bytes.
+4. Check status, validity dates, and the hardware fingerprint.
+5. Persist the license and public key as a pair only after all checks pass.
 
-    %% Branches
-    CheckType -- standalone --> CheckHW{Compare hardware fingerprint}
-    CheckType -- cloud / hybrid --> CheckNet{Online/heartbeat validation}
+Do not treat `public_key` as an ignorable compatibility field.
 
-    %% Final results
-    CheckHW -- Mismatch --> ErrHW[Stop: fingerprint mismatch]
-    CheckNet -- Rejected --> ErrNet[Stop: server rejected]
+## License envelope
 
-    CheckHW -- Match --> Success([All checks passed])
-    CheckNet -- Accepted --> Success
-
-    %% Styles
-    classDef error fill:#f9f2f4,stroke:#c00,stroke-width:2px,color:#c00;
-    classDef success fill:#e1fdf4,stroke:#009966,stroke-width:2px,color:#009966;
-    classDef process fill:#f9f9f9,stroke:#333,stroke-width:1px;
-
-    class ErrFormat,ErrTamper,ErrStatus,ErrHW,ErrNet error;
-    class Success success;
-    class Decode,VerifySig,ParseData,CheckHW,CheckNet process;
-```
-
-## 2. Top-Level License Structure
-
-Once the Base64 string is decoded you will get a JSON object containing three core fields. The structure keeps the payload human-readable while protecting integrity through an asymmetrical signature.
-
-### Field reference
+After Base64 decoding, the license envelope contains:
 
 | Field | Type | Description |
-| :--- | :--- | :--- |
-| `algorithm` | String | Algorithm used to generate the signature, for example `RSA-PSS-SHA256`. |
-| `data` | String | **Primary payload** serialized as a JSON string. Contains all enforcement rules, time limits, and fingerprint bindings. |
-| `signature` | String | Base64 signature generated from the `data` field. Clients must verify it with the embedded product public key before trusting the payload. |
+|---|---|---|
+| `algorithm` | String | Signature algorithm, currently `RSA-PSS-SHA256` |
+| `data` | String | Original serialized JSON payload |
+| `signature` | String | Base64 signature over the original `data` bytes |
 
------
+The payload can include `license_key`, `product_code`, `status`, validity dates, `hardware_fingerprint`, `deployment_type`, `feature_config`, `usage_limits`, and `custom_parameters`.
 
-## 3. `data` Payload Details
+Never parse and reserialize `data` before signature verification, because that may change the signed bytes.
 
-The `data` field carries every parameter that governs runtime behavior. After deserializing the string, reference the values below to decide how the software should run.
+## Validation order
 
-### Core parameters
+1. Select the product public key paired with the current license.
+2. Decode and parse the license envelope.
+3. Require a supported signature algorithm.
+4. Verify the signature over the original `data` string.
+5. Parse the payload only after signature verification succeeds.
+6. Require an allowed status and a valid time window.
+7. Match the current hardware fingerprint.
+8. Apply product-specific features and limits.
+9. Enable protected behavior or replace a stored license only after every check passes.
 
-| Parameter | Values / Type | Description & engineering tips |
-| :--- | :--- | :--- |
-| `status` | `active`, `revoked` | Current license state. Only **active** may proceed; expiry is determined separately from the validity dates. |
-| `deployment_type` | `standalone`, `cloud`, `hybrid` | Determines runtime synchronization behavior. All modes verify locally first; cloud and hybrid may also use heartbeat for remote updates. |
-| `start_date` / `end_date` | ISO 8601 timestamp | Validity window for the license. Compare against system time during startup; treat any `end_date` in the past as expired. |
-| `hardware_fingerprint` | String | Deterministic hash of a stable OS or firmware device identifier. Do not derive it from MAC addresses or other network-interface data. Recalculate locally and compare; mismatch implies an unauthorized copy or a genuine device-identity change. |
-| `product_code` | String | Product that issued the license. |
-| `usage_limits` | Object | Usage quotas (API calls, seat counts, etc.). |
-| `feature_config` | Object | Key-value feature switches controlling which modules (Basic vs Pro) the client may enable. |
-| `license_key` | String | Unique identifier for the licensed device; use for logging and backend correlation. |
+A valid signature proves issuer and integrity; it does not replace status, time, or device-binding checks.
 
------
+## Heartbeat license updates
 
-## 4. Decoded Example
+A heartbeat may return a new `license_file`, but it does not return a new public key. Verify the new license with the locally stored product public key and run the same complete validation used after activation. Replace the old license atomically only when validation succeeds; otherwise retain the old license and key.
 
-Here is a decoded license sample to highlight formatting and field expectations:
+## Fully offline delivery
 
-```json
-{
-  "algorithm": "RSA-PSS-SHA256",
-  "data": "{\"activated_at\":\"2025-11-01T22:30:02...\",\"status\":\"active\",\"product_code\":\"demo-app\",\"deployment_type\":\"standalone\",\"hardware_fingerprint\":\"sha256:8f2c...\",\"end_date\":\"2027-03-03T23:59:59+08:00\", ...}",
-  "signature": "MQDlxx/crzncJfw2Y00X5spzN1bPWKuU4IDxB48Mwy1WMhOoYUDCcrYjiMgNJHsXzUSD14MURqCBKBMgQAc7EOiUUcwfJ1mhSGvbFYnrSGFxjpbEHUg6dJlgSB4jSxwh4jtHSOb82SvPkHrNE0/p/HKN2Vr3Dj2qU0JB7hM2Jd0vb3Tk7WiFWd9as3vvAChhzoXqHo53vtY7ZyUb56VM/M4UMwJ4w4S7M3DZiPwAAobOn1MfOmOnchXzc+lkhC9c67xprmOi33ms775Dc0tNurv+rCLTQN8wgnt5dfhmdyMbsIk2c188IK/7uca2Pi3qaBKSIkVkSKN78pI2A6gMYIA=="
-}
-```
-
-> **Note:** `data` must remain in its original string form when verifying the signature. Only deserialize after the RSA verification succeeds.
-
------
-
-## 5. Client Validation Checklist
-
-Use this checklist to implement a hardened validation pipeline:
-
-1. **Decode**: Base64-decode the license string.
-2. **Verify signature**: With the product public key embedded at development/build time, run RSA verification against the original `data` string and the provided `signature`. Abort immediately if the signature fails.
-3. **Parse payload**: Deserialize `data` into an object.
-4. **Evaluate status & timeline**:
-   - Require `status === "active"`.
-   - Confirm current time is between `start_date` and `end_date`.
-5. **Match environment**:
-   - Branch based on `deployment_type`.
-   - Standalone: recompute hardware fingerprint and compare with `hardware_fingerprint`.
-   - Cloud/Hybrid: perform online heartbeat or fallback strategy.
-
-> Consider implementing the checklist as a modular validation pipeline so additional strategies (SaaS tenant isolation, audit logging, etc.) can be plugged in later.
+A fully offline client cannot acquire a key from an online response. Deliver at least the license file and its product public key together. The client validates and persists that pair using the same signature, status, time, and hardware checks.
