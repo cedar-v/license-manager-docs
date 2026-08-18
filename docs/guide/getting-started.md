@@ -2,9 +2,7 @@
 
 ## 立即体验
 
-访问 [lm.cedar-v.com](http://lm.cedar-v.com) 立即体验。
-- 用户名：admin
-- 密码：admin@123
+访问 [雪松授权云](https://lic.cedar-v.com/) 立即体验。请注册或使用自己的账号登录；私有化演示请通过[官网产品页](https://cedar-v.com/products/cedar-license-cloud/#service)预约。
 
 ## GitHub 镜像快速部署指南
 

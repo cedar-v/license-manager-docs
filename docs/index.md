@@ -254,7 +254,7 @@ hero:
     </div>
   </a>
 
-  <a href="https://www.cedar-v.com" class="quick-start-link">
+  <a href="https://cedar-v.com/" class="quick-start-link">
     <div class="quick-start-icon">
       <iconify-icon icon="solar:global-bold-duotone" width="32" height="32"></iconify-icon>
     </div>

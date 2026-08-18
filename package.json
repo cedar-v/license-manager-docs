@@ -2,6 +2,7 @@
   "name": "my-docs",
   "version": "1.0.0",
   "scripts": {
+    "check:links": "node scripts/check-public-links.mjs --external",
     "docs:dev": "vitepress dev docs",
     "docs:build": "vitepress build docs",
     "docs:preview": "vitepress preview docs"

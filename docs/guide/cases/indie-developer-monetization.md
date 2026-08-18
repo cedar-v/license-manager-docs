@@ -23,7 +23,7 @@ License Manager SDK 对接成本比较低，客户端只需要在启动时做一
 from license_manager import LicenseClient
 
 client = LicenseClient(
-    server_url="https://api.lm.cedar-v.com",
+    server_url="https://lic.cedar-v.com",
     api_key="your_api_key",
     product_id="your_product_id"
 )

@@ -14,7 +14,7 @@ hero:
       link: /en/guide/getting-started
     - theme: alt
       text: Live Demo
-      link: http://lm.cedar-v.com
+      link: https://lic.cedar-v.com/
     - theme: alt
       text: GitHub
       link: https://github.com/cedar-v/license-manager
@@ -116,11 +116,7 @@ hero:
 
 ## Live Demo
 
-Access: [lm.cedar-v.com](http://lm.cedar-v.com)
-
-**Login Credentials:**
-- Username: `admin`
-- Password: `admin@123`
+Access: [Cedar License Cloud](https://lic.cedar-v.com/). Register or sign in with your own account. For a private-deployment demonstration, use the contact entry on the [official product page](https://cedar-v.com/products/cedar-license-cloud/#service).
 
 ::: tip Note
 This is a demonstration environment where you can experience the core features. We are continuously developing, and more features will be released soon.

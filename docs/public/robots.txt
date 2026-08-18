@@ -33,6 +33,3 @@ Disallow: /dist/
 
 # XML Sitemap
 Sitemap: https://docs.lm.cedar-v.com/sitemap.xml
-
-# HTML Sitemap
-Sitemap: https://docs.lm.cedar-v.com/sitemap.html

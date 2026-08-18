@@ -1,4 +1,4 @@
 # API Reference
 
-Official: [http://lm.cedar-v.com:18888/swagger/index.html](http://lm.cedar-v.com:18888/swagger/index.html)
+Official: [https://lic.cedar-v.com/swagger/index.html](https://lic.cedar-v.com/swagger/index.html)
 Local deployment: [http://localhost:18888/swagger/index.html](http://localhost:18888/swagger/index.html)

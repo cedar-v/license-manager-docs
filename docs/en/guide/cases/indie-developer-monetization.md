@@ -23,7 +23,7 @@ The integration cost of the License Manager SDK is relatively low. On the client
 from license_manager import LicenseClient
 
 client = LicenseClient(
-    server_url="https://api.lm.cedar-v.com",
+    server_url="https://lic.cedar-v.com",
     api_key="your_api_key",
     product_id="your_product_id"
 )
