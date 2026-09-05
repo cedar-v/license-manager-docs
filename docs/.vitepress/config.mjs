@@ -107,6 +107,9 @@ export default withMermaid(
     ],
     base: '/', // 使用自定义域名时，base 应该设置为 '/'
 
+    // 构建时扫描正式页面；不使用固定日期伪造更新时间。
+    sitemap: { hostname: 'https://docs.lm.cedar-v.com' },
+
     // 忽略死链检查
     ignoreDeadLinks: [
       // 忽略所有 localhost 链接
@@ -122,9 +125,10 @@ export default withMermaid(
             { text: '首页', link: '/' },
             { text: '指南', link: '/guide/' },
             { text: '开发者中心', link: '/developer/' },
-            { text: '战略洞察', link: '/guide/why/software-asset-strategic-value.md' },
-            { text: '客户案例', link: '/guide/cases/machine-vision-licensing' },
-            { text: '政策与规范', link: '/policies/' }
+            { text: '战略洞察', link: '/guide/why/software-asset-strategic-value.html' },
+            { text: '客户案例', link: '/guide/cases/' },
+            { text: '政策与规范', link: '/policies/' },
+            { text: '官方网站', link: 'https://cedar-v.com/' }
           ],
           sidebar: {
             '/developer/': [
@@ -166,6 +170,7 @@ export default withMermaid(
                   { text: '介绍', link: '/guide/' },
                   { text: '功能介绍', link: '/guide/features' },
                   { text: '快速开始', link: '/guide/getting-started' },
+                  { text: '自行部署', link: '/guide/self-hosting' },
                   { text: 'AI 原生 API 快速接入（推荐）', link: '/developer/ai-quickstart' },
                   { text: '操作指南', link: '/guide/operating_guide' },
                   { text: '许可证结构与验证（客户端要点）', link: '/guide/license-token-structure' },
@@ -178,15 +183,18 @@ export default withMermaid(
               {
                 text: '战略洞察',
                 items: [
-                  { text: '代码之上是资产：战略价值与意义', link: '/guide/why/software-asset-strategic-value/' },
-                  { text: '为什么需要授权管理系统', link: '/guide/why/why-you-need-license-management/' }
+                  { text: '代码之上是资产：战略价值与意义', link: '/guide/why/software-asset-strategic-value.html' },
+                  { text: '为什么需要授权管理系统', link: '/guide/why/why-you-need-license-management.html' }
                 ]
               },
               {
                 text: '客户案例',
                 items: [
+                  { text: '案例概览', link: '/guide/cases/' },
+                  { text: '硬件设备厂商的配套软件授权', link: '/guide/cases/20260905-equipment-software-licensing' },
+                  { text: 'JAR 包、C++ 插件与 SDK 的商业授权', link: '/guide/cases/20260905-component-licensing' },
                   { text: '机器视觉检测软件的灵活授权方案', link: '/guide/cases/machine-vision-licensing' },
-                  { text: '独立开发者的即时变现之路', link: '/guide/cases/indie-developer-monetization' }
+                  { text: '独立开发者的软件销售与授权', link: '/guide/cases/indie-developer-monetization' }
                 ]
               }
             ],
@@ -212,8 +220,9 @@ export default withMermaid(
           nav: [
             { text: 'Home', link: '/en/' },
             { text: 'Guide', link: '/en/guide/' },
-            { text: 'Strategic Insights', link: '/en/guide/why/' },
-            { text: 'Case Studies', link: '/en/guide/cases/indie-developer-monetization' }
+            { text: 'Strategic Insights', link: '/en/guide/why/software-asset-strategic-value.html' },
+            { text: 'Case Studies', link: '/en/guide/cases/indie-developer-monetization' },
+            { text: 'Official Website', link: 'https://cedar-v.com/' }
           ],
           sidebar: {
             '/en/guide/': [
@@ -233,9 +242,9 @@ export default withMermaid(
               {
                 text: 'Strategic Insights',
                 items: [
-                  { text: 'Strategic Insights', link: '/en/guide/why/' },
-                  { text: 'Why You Need a License Management System', link: '/en/guide/why/why-you-need-license-management/' },
-                  { text: 'Software Asset Strategic Value', link: '/en/guide/why/software-asset-strategic-value/' }
+                  { text: 'Strategic Insights', link: '/en/guide/why/software-asset-strategic-value.html' },
+                  { text: 'Why You Need a License Management System', link: '/en/guide/why/why-you-need-license-management.html' },
+                  { text: 'Software Asset Strategic Value', link: '/en/guide/why/software-asset-strategic-value.html' }
                 ]
               },
               {

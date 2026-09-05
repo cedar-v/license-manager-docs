@@ -122,7 +122,7 @@ flowchart TD
 
 如果您是第一次接触 License Manager，建议按下面顺序阅读：
 
-1. 先看 [快速开始](./getting-started.md)，了解系统怎么部署
+1. 先看 [快速开始](./getting-started.md)，注册并为自己的软件接入使用期限控制；需要自行运行授权服务时，再看[自行部署](./self-hosting.md)
 2. 再看 [操作指南](./operating_guide.md)，理解授权创建、分发、激活和续期流程
 3. 如果您需要接入客户端，推荐直接使用 [AI 原生 API 快速接入（推荐）](/developer/ai-quickstart.md)
 4. 如果您希望先体验一遍客户端流程，可以查看 [客户端授权测试工具](./client-simulator.md)
@@ -140,4 +140,6 @@ flowchart TD
 - [客户端 SDK（可选）](./sdk.md)
 - [为什么需要授权管理系统](./why/why-you-need-license-management.md)
 - [机器视觉检测软件的灵活授权方案](./cases/machine-vision-licensing.md)
+- [JAR 包、C++ 插件与 SDK 的商业授权](./cases/20260905-component-licensing.md)
+- [硬件设备厂商如何管理配套软件授权](./cases/20260905-equipment-software-licensing.md)
 - [独立开发者的即时变现之路](./cases/indie-developer-monetization.md)

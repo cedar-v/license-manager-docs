@@ -47,6 +47,7 @@ function cleanLink(raw) {
 function collectLinks(text) {
   const links = []
   const patterns = [
+    /\blink\s*:\s*["']([^"']+)["']/g,
     /(?:href|src)\s*=\s*["']([^"']+)["']/gi,
     /!?\[[^\]]*\]\(([^)\s]+)(?:\s+["'][^"']*["'])?\)/g
   ]
@@ -76,6 +77,10 @@ function candidatesFor(sourceFile, rawUrl) {
   const base = path.resolve(relativeBase, relativePath)
   const candidates = [base]
   if (docsMode) {
+    if (decoded.endsWith('/')) {
+      return [path.join(base, 'index.md'), path.join(base, 'index.html'),
+        path.join(contentRoot, 'public', relativePath, 'index.html')]
+    }
     candidates.push(base + '.md', path.join(base, 'index.md'))
     if (base.endsWith('.html')) {
       const withoutHtml = base.slice(0, -5)
@@ -128,7 +133,9 @@ for (const file of await walk(contentRoot)) {
       continue
     }
     const candidates = candidatesFor(file, link.url)
-    if (!(await Promise.all(candidates.map(exists))).some(Boolean)) {
+    if (!(await Promise.all(candidates.map(async (target) => {
+      try { return (await fs.stat(target)).isFile() } catch { return false }
+    }))).some(Boolean)) {
       errors.push(relative + ':' + lineOf(text, link.index) + ': 站内目标不存在 (' + link.url + ')')
     }
   }

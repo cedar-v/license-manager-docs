@@ -1,47 +1,40 @@
+---
+title: 快速开始：给软件加上使用期限控制
+description: 免费注册雪松授权云，创建授权码，通过 AI 为现有软件接入使用期限控制。免费版可长期使用，也可正式商用，额度不足时再升级。
+---
+
 # 快速开始
 
-## 立即体验
+给现有软件加上使用期限控制，从下面四步开始，无需自行部署授权服务。
 
-访问 [雪松授权云](https://lic.cedar-v.com/) 立即体验。请注册或使用自己的账号登录；私有化演示请通过[官网产品页](https://cedar-v.com/products/cedar-license-cloud/#service)预约。
+::: tip 免费版可长期使用，也可正式商用
+免费版提供较少的使用额度，没有试用期限。额度够用即可持续使用，需要更多额度时再[升级套餐](https://cedar-v.com/pricing/)。
+:::
 
-## GitHub 镜像快速部署指南
+## 1. 免费注册
 
-### 1. 获取部署文件
+打开[雪松授权云](https://lic.cedar-v.com/)，注册并登录。
 
-复制项目根目录的 `docker-compose.github.image.yml` 文件到你的部署目录：
+## 2. 创建产品和授权码
 
-```bash
-# 方式一：直接下载
-curl -O https://raw.githubusercontent.com/cedar-v/license-manager/main/docker-compose.github.image.yml
+添加自己的软件产品，记下产品编码。为该产品创建授权码，设置使用期限和允许激活的设备数量，并可按需调整功能配置、使用限制和自定义参数。
 
-# 方式二：从项目中复制
-cp docker-compose.github.image.yml /your/deploy/path/
-```
+首次接入可以先使用简单规则，例如：从激活起使用 30 天，允许激活 1 台设备，高级设置保持默认。具体操作见[操作指南](./operating_guide.md)。
 
-### 2. 提取配置文件
+## 3. 用 AI 接入自己的软件
 
-```bash
-# 提取后端配置文件
-mkdir -p backend-config
-docker run --rm -v $(pwd)/backend-config:/tmp/config ghcr.io/cedar-v/license-manager-backend:v1.0.0 sh -c "cp -r /app/backend/configs/* /tmp/config/"
+用 AI 编程工具打开自己的软件项目，进入[AI 接入指南](/developer/ai-quickstart.md)：
 
-# 提取前端 nginx 配置文件
-docker run --rm -v $(pwd):/tmp/extract ghcr.io/cedar-v/license-manager-frontend:v1.0.0 sh -c "cp /etc/nginx/conf.d/default.conf /tmp/extract/nginx.conf"
-```
+- 复制完整的“协议提示词”和一个业务模板。
+- 填入产品编码，说明哪些功能需要授权后才能使用。
+- 交给 AI 完成接入，然后编译运行。
 
-### 3. 启动服务
+只需控制使用期限，选 **模板 A**；还需同步续期和撤销，选 **模板 C**。
 
-```bash
-docker-compose -f docker-compose.github.image.yml up
+## 4. 激活并验证
 
-# 如果提示命令错误尝试如下
-docker compose -f docker-compose.github.image.yml up
-```
+在自己的软件中输入授权码，确认有效期内可以使用、到期后受保护功能无法继续使用。正式交付前，按[上线检查清单](/developer/production-checklist.md)完成验证，即可向客户发放授权。
 
->注意：启动如果报错数据库连接失败，请再次执行启动服务命令一次
+---
 
-## 访问信息
-
-- **前端**: http://localhost:18080
-- **后端 API**: http://localhost:18888
-- **默认账号**: admin / admin@123
+其他需要：[完全离线接入](/developer/activation-offline.md) · [自行部署](./self-hosting.md) · [接入排障](/developer/troubleshooting.md) · [联系支持](https://cedar-v.com/products/cedar-license-cloud/#service)

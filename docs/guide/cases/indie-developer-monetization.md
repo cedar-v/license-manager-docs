@@ -17,7 +17,9 @@
 
 ## 接入方式
 
-License Manager SDK 对接成本比较低，客户端只需要在启动时做一次授权校验：
+新项目推荐参考 [AI 接入指南](/developer/ai-quickstart.html)。以下保留原案例的 SDK 调用示意，具体类名和参数应以所选 SDK 版本为准，不能直接当作当前 API 协议。当前公开激活接口使用产品编码，不需要 API Key；运行中的软件还应在关键功能执行前检查授权是否到期。
+
+原案例的启动校验示意：
 
 ```python
 from license_manager import LicenseClient
@@ -35,7 +37,7 @@ if not result.valid:
 
 SDK 会自动处理一部分基础流程，包括：
 
-- 公钥下载
+- 获取与许可证配对的产品公钥
 - 许可证下载
 - 许可证解析与校验
 - 未激活时的激活流程
