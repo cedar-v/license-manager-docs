@@ -31,7 +31,7 @@ AI 接入分为两段：
 <metadata>
 name=雪松授权云客户端接入协议
 api_version=v1
-revision=2026-08-18
+revision=2026-10-04
 default_api_base=https://lic.cedar-v.com
 transport=HTTPS + JSON
 authentication=以下客户端公开接口不需要登录或 API Key
@@ -177,12 +177,13 @@ license_file 是 Base64 编码的 JSON：
 
 data 当前可能包含：
 license_key、authorization_code_id、authorization_code、product_code、hardware_fingerprint、
-status、activated_at、config_updated_at、generated_at、start_date、end_date、
+status、is_locked、activated_at、config_updated_at、generated_at、start_date、end_date、
 deployment_type、max_activations、feature_config、usage_limits、custom_parameters。
 
 校验规则：
 - 当前许可证有效状态是 active；revoked、空值及任何未知状态都必须阻断。
 - normal、locked、expired 是授权码状态，不是当前许可证 data.status 枚举。
+- is_locked 是所属授权码的锁定属性，位于验签后解析的 data 内，布尔值 true 表示锁定、false 表示未锁定或已解锁；当前服务端签发的文件明确包含该字段。即使 status=active，is_locked=true 也必须阻断受保护业务。旧文件缺少该字段不能据此获知授权是否已锁定。
 - start_date 或 end_date 存在时按 RFC3339 解析，要求 start_date <= 当前时间 <= end_date。
 - hardware_fingerprint 必须与当前设备完全一致。
 - deployment_type 可能为 standalone、cloud、hybrid。
@@ -206,7 +207,7 @@ deployment_type、max_activations、feature_config、usage_limits、custom_param
 <protocol_invariants>
 - 使用对接项目语言的 HTTP 能力和成熟密码学库，不使用 License Manager SDK。
 - 激活、试用或恢复同时返回 license_file 与 public_key；先使用本次响应公钥完成验签、状态、时间和指纹校验，再配对原子保存。
-- 心跳返回新 license_file 时使用本地已保存的产品公钥完成同样校验，通过后只替换许可证；失败时保留旧许可证。
+- 心跳返回新 license_file 时，使用本地已保存的产品公钥验签，并校验结构、产品和设备身份；这些校验通过后只替换许可证，失败时保留旧许可证。锁定不属于验签失败：is_locked=true 的可信文件也应保存并执行锁定，不能丢弃新文件继续使用旧文件；业务是否可用再依据新文件的状态、锁定属性和有效期判断。
 - 纯离线导入必须同时取得 license_file 与产品公钥，先完整校验再配对保存。
 - 日志不得输出完整授权码、license_key、license_file、客户敏感信息或任何私钥。
 - HTTP 客户端必须设置超时；生产环境使用 HTTPS。
@@ -280,7 +281,7 @@ LICENSE_DIR=<让 AI 选择当前操作系统规范的应用数据目录>
 
 ### 模板 C：在线激活 + 心跳远程管控
 
-适合需要远程撤销、续期、配置更新或用量上报的软件。
+适合需要授权锁定与解锁、远程撤销、续期、配置更新或用量上报的软件。
 
 ```text
 <business_requirement>
@@ -296,8 +297,8 @@ NETWORK_FAILURE_POLICY=<例如：本地许可证有效时继续运行并告警�
 3. cloud 或 hybrid 模式按服务端 heartbeat_interval 在后台发送心跳，不能写死间隔。
 4. usage_data 发送当前完整快照；并发更新必须安全。
 5. config_updated_at 优先使用许可证字段；首次为空时保存激活成功时间作为本地同步时间。
-6. 心跳返回新 license_file 时，先用本地已保存的产品公钥完成全部校验，再原子替换；失败时保留旧文件。
-7. 收到 code=300007、status 非 active 或有效的撤销结果后，立即阻断后续受保护业务。
+6. 心跳返回新 license_file 时，先用本地已保存的产品公钥验签并校验结构、产品和设备身份，再原子替换本地文件；这些校验失败时保留旧文件。is_locked=true 的可信文件也必须保存，再按新文件判断业务是否可用。
+7. 授权锁定读取验签后许可证 data.is_locked，不读取心跳响应的 status 来推断锁定，也不期待许可证 status 变成 locked。is_locked=true 时立即阻断受保护业务，重启或离线时同样按本地文件执行；保留后台心跳以接收解锁更新。新文件 is_locked=false 且许可证状态、有效期等校验全部通过后才能恢复业务。收到 code=300007 时仍按许可证撤销处理。
 8. 临时网络失败按 NETWORK_FAILURE_POLICY 处理，不能误判为撤销，也不能卡死应用启动。
 9. 根据对接项目业务映射 feature_config、usage_limits、custom_parameters；不确定字段含义时列出映射点让用户修改。
 
